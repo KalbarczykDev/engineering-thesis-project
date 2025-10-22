@@ -1,0 +1,50 @@
+services:
+  mysql:
+    image: mysql
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=thesis
+    ports:
+      - "3307:3306"
+    volumes:
+      - my-vol:/var/lib/mysql
+    networks:
+      - my-net
+    restart: always
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  exercise-service:
+    build: ./exercise-service
+    container_name: exercise-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    networks:
+      - my-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: on-failure
+
+  angular-app:
+    build: ./angular-app
+    container_name: angular-app
+    ports:
+      - "4200:80"
+    depends_on:
+      - exercise-service
+    networks:
+      - my-net
+
+
+
+networks:
+  my-net:
+volumes:
+  my-vol:

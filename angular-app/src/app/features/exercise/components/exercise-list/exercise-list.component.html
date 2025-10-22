@@ -1,0 +1,22 @@
+<div class="exercise-list-container">
+  <h2>Exercises</h2>
+
+  @if (loading) {
+    <div class="loading">Loading exercises...</div>
+  } @else if (exercises.length === 0) {
+    <div class="no-data">No exercises found</div>
+  } @else {
+    <div class="exercise-grid">
+      @for (exercise of exercises; track exercise.name) {
+        <div class="exercise-card">
+          <h3>{{ exercise.name }}</h3>
+          <p><strong>Category:</strong> {{ exercise.category }}</p>
+          <p><strong>Muscle Group:</strong> {{ exercise.muscleGroup }}</p>
+          @if (exercise.equipment) {
+            <p><strong>Equipment:</strong> {{ exercise.equipment }}</p>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
