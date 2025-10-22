@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
 import {
   HttpInterceptorFn,
   HttpRequest,
   HttpHandlerFn
 } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 export const mockInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn) => {
   if (environment.useMockData) {
