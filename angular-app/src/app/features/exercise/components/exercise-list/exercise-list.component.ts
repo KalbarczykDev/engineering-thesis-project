@@ -1,11 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {Exercise} from "../../models/exercise.model";
-import {ExerciseService} from "../../services/exercise.service";
+import { Component, OnInit } from '@angular/core';
+import { Exercise } from "../../models/exercise.model";
+import { ExerciseService } from "../../services/exercise.service";
+import { ExerciseCardComponent } from '../exercise-card/exercise-card.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-exercise-list',
   standalone: true,
-  imports: [],
+  imports: [ExerciseCardComponent, CommonModule],
   templateUrl: './exercise-list.component.html',
   styleUrl: './exercise-list.component.scss'
 })

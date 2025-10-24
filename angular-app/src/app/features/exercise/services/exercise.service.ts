@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Exercise } from '../models/exercise.model';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {Exercise} from '../models/exercise.model';
+import {environment} from "../../../../environments/environment";
 
 
 @Injectable({
@@ -9,12 +10,14 @@ import { Exercise } from '../models/exercise.model';
 })
 export class ExerciseService {
 
-  private apiUrl = 'http://localhost:8080/api/exercises';
+  private apiUrl = `${environment.apiUrl}/exercises`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   getExercises(): Observable<Exercise[]> {
     return this.http.get<Exercise[]>(this.apiUrl);
   }
+
 
 }

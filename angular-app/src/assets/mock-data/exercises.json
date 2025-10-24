@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "name": "Barbell Bench Press",
+    "category": "STRENGTH",
+    "muscleGroup": "CHEST",
+    "equipment": "BARBELL",
+    "description": "Compound exercise for building chest strength and mass",
+    "imageUrl": "https://via.placeholder.com/300x200?text=Bench+Press",
+    "createdAt": "2024-01-15T10:00:00Z",
+    "lastUpdateAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Barbell Squat",
+    "category": "STRENGTH",
+    "muscleGroup": "LEGS",
+    "equipment": "BARBELL",
+    "description": "King of leg exercises for building lower body strength",
+    "imageUrl": "https://via.placeholder.com/300x200?text=Squat",
+    "createdAt": "2024-01-15T10:05:00Z",
+    "lastUpdateAt": "2024-01-15T10:05:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Pull-ups",
+    "category": "STRENGTH",
+    "muscleGroup": "BACK",
+    "equipment": "BODYWEIGHT",
+    "description": "Classic bodyweight exercise for back and biceps",
+    "imageUrl": "https://via.placeholder.com/300x200?text=Pull-ups",
+    "createdAt": "2024-01-15T10:10:00Z",
+    "lastUpdateAt": "2024-01-15T10:10:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Dumbbell Shoulder Press",
+    "category": "STRENGTH",
+    "muscleGroup": "SHOULDERS",
+    "equipment": "DUMBBELL",
+    "description": "Build strong shoulders with this pressing movement",
+    "imageUrl": "https://via.placeholder.com/300x200?text=Shoulder+Press",
+    "createdAt": "2024-01-15T10:15:00Z",
+    "lastUpdateAt": "2024-01-15T10:15:00Z"
+  },
+  {
+    "id": 5,
+    "name": "Running",
+    "category": "CARDIO",
+    "muscleGroup": "FULL_BODY",
+    "equipment": "NONE",
+    "description": "Cardiovascular exercise for endurance and fat loss",
+    "imageUrl": "https://via.placeholder.com/300x200?text=Running",
+    "createdAt": "2024-01-15T10:20:00Z",
+    "lastUpdateAt": "2024-01-15T10:20:00Z"
+  },
+  {
+    "id": 6,
+    "name": "Deadlift",
+    "category": "STRENGTH",
+    "muscleGroup": "BACK",
+    "equipment": "BARBELL",
+    "description": "Full body compound movement for overall strength",
+    "imageUrl": "https://via.placeholder.com/300x200?text=Deadlift",
+    "createdAt": "2024-01-15T10:25:00Z",
+    "lastUpdateAt": "2024-01-15T10:25:00Z"
+  },
+  {
+    "id": 7,
+    "name": "Plank",
+    "category": "CORE",
+    "muscleGroup": "ABS",
+    "equipment": "BODYWEIGHT",
+    "description": "Isometric core strengthening exercise",
+    "imageUrl": "https://via.placeholder.com/300x200?text=Plank",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "lastUpdateAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": 8,
+    "name": "Cycling",
+    "category": "CARDIO",
+    "muscleGroup": "LEGS",
+    "equipment": "MACHINE",
+    "description": "Low impact cardio for leg endurance",
+    "imageUrl": "https://via.placeholder.com/300x200?text=Cycling",
+    "createdAt": "2024-01-15T10:35:00Z",
+    "lastUpdateAt": "2024-01-15T10:35:00Z"
+  },
+  {
+    "id": 9,
+    "name": "Bicep Curls",
+    "category": "STRENGTH",
+    "muscleGroup": "ARMS",
+    "equipment": "DUMBBELL",
+    "description": "Isolation exercise for bicep development",
+    "imageUrl": "https://via.placeholder.com/300x200?text=Bicep+Curls",
+    "createdAt": "2024-01-15T10:40:00Z",
+    "lastUpdateAt": "2024-01-15T10:40:00Z"
+  },
+  {
+    "id": 10,
+    "name": "Leg Press",
+    "category": "STRENGTH",
+    "muscleGroup": "LEGS",
+    "equipment": "MACHINE",
+    "description": "Machine-based leg strengthening exercise",
+    "imageUrl": "https://via.placeholder.com/300x200?text=Leg+Press",
+    "createdAt": "2024-01-15T10:45:00Z",
+    "lastUpdateAt": "2024-01-15T10:45:00Z"
+  }
+]
