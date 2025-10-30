@@ -1,0 +1,7 @@
+<div *ngIf="workouts.length; else empty">
+  <app-workout-item *ngFor="let workout of workouts" [workout]="workout"></app-workout-item>
+</div>
+
+<ng-template #empty>
+  <p class="text-muted">No workouts yet.</p>
+</ng-template>
