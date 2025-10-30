@@ -21,7 +21,7 @@ export class LoginComponent {
 
   login(): void {
     if (this.auth.login(this.email, this.password)) {
-      this.router.navigate(['/']).then();
+      this.router.navigate(['/profile']).then();
     }
   }
 }

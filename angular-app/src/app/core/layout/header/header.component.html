@@ -12,10 +12,6 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/" routerLinkActive="active"
-             [routerLinkActiveOptions]="{exact: true}">Home</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" routerLink="/profile" routerLinkActive="active">Profile</a>
         </li>
         <li class="nav-item">
@@ -24,6 +20,15 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/exercises" routerLinkActive="active">Exercises</a>
         </li>
+        @if (auth.isAuthenticated()) {
+          <li class="nav-item">
+            <button class="btn btn-outline-light ms-3" (click)="logout()">Logout</button>
+          </li>
+        } @else {
+          <li class="nav-item">
+            <a class="btn btn-primary ms-3" routerLink="/login">Login</a>
+          </li>
+        }
       </ul>
     </div>
   </div>

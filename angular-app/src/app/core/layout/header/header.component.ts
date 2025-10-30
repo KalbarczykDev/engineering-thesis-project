@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import {RouterLink, RouterLinkActive} from "@angular/router";
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-header',
@@ -12,5 +14,11 @@ import {RouterLink, RouterLinkActive} from "@angular/router";
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
+  constructor(public auth: AuthService, private router: Router) {
+  }
 
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/']).then();
+  }
 }
