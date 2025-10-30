@@ -1,10 +1,6 @@
 import {Component, Input} from '@angular/core';
+import {Workout} from '../../models/workout';
 
-interface Workout {
-  date: string;
-  type: string;
-  duration: number;
-}
 
 @Component({
   selector: 'app-workout-item',

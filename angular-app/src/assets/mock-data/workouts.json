@@ -1,0 +1,5 @@
+[
+  { "date": "2025-10-01", "type": "Chest", "duration": 60 },
+  { "date": "2025-10-03", "type": "Legs", "duration": 45 },
+  { "date": "2025-10-05", "type": "Back", "duration": 50 }
+]

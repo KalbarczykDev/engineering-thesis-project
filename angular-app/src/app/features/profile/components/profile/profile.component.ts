@@ -1,12 +1,7 @@
 import {Component} from '@angular/core';
 import {WorkoutListComponent} from "../workout-list/workout-list.component";
-
-
-interface Workout {
-  date: string;
-  type: string;
-  duration: number; // in minutes
-}
+import {Workout} from "../../models/workout";
+import {ProfileService} from "../../services/profile.service";
 
 
 @Component({
@@ -19,15 +14,17 @@ interface Workout {
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
-  user = {
-    username: 'gymbro',
-    email: 'gymbro@example.com'
-  };
 
-  workouts: Workout[] = [
-    {date: '2025-10-01', type: 'Chest', duration: 60},
-    {date: '2025-10-03', type: 'Legs', duration: 45},
-    {date: '2025-10-05', type: 'Back', duration: 50},
-  ];
+  user: { username: string; email: string } | null = null;
+  workouts: Workout[] = [];
+
+  constructor(private profileService: ProfileService) {
+  }
+
+  ngOnInit() {
+    this.profileService.getUser().subscribe(u => this.user = u);
+    this.profileService.getWorkouts().subscribe(w => this.workouts = w);
+  }
+
 
 }
