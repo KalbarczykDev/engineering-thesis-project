@@ -1,22 +1,30 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold text-uppercase" routerLink="/">
-            <i class="fas fa-dumbbell me-2"></i> Gym Tracker
-        </a>
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold text-uppercase" routerLink="/">
+      <i class="fas fa-dumbbell me-2"></i> Gym Tracker
+    </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/exercises" routerLinkActive="active">Exercises</a>
-                </li>
-                </ul>
-        </div>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active"
+             [routerLinkActiveOptions]="{exact: true}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/profile" routerLinkActive="active">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/workouts" routerLinkActive="active">New Workout</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/exercises" routerLinkActive="active">Exercises</a>
+        </li>
+      </ul>
     </div>
+  </div>
 </nav>
