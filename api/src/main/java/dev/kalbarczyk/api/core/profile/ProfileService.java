@@ -14,5 +14,5 @@ public interface ProfileService {
     @GetMapping(
             value = "/profiles/{userID}",
             produces = "application/json")
-    Profile getProfile(@PathVariable int userID);
+    Profile getProfile(final @PathVariable int userID);
 }
