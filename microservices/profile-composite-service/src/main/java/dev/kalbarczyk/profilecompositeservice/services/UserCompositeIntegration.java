@@ -37,8 +37,8 @@ public class UserCompositeIntegration {
     ) {
         this.restTemplate = restTemplate;
         this.mapper = objectMapper;
-        this.profileServiceUrl = "http://" + profileServiceHost + ":" + profileServicePort + "/profile/";
-        this.userServiceUrl = "http://" + userServiceHost + ":" + userServicePort + "/user/";
+        this.profileServiceUrl = "http://" + profileServiceHost + ":" + profileServicePort + "/profiles/";
+        this.userServiceUrl = "http://" + userServiceHost + ":" + userServicePort + "/users/";
     }
 
     public User getUser(final int userId) {
