@@ -8,11 +8,11 @@ public interface UserCompositeService {
     /**
      * Sample usage: "curl $HOST:$PORT/user-composite/1".
      *
-     * @param userId ID of the product
-     * @return the composite product info, if found, else null
+     * @param userId ID of the user
+     * @return the composite user info, if found, else null
      */
     @GetMapping(
             value = "/user-composite/{userId}",
             produces = "application/json")
-    UserAggregate getProduct(final @PathVariable int userId);
+    UserAggregate getUser(final @PathVariable int userId);
 }

@@ -18,6 +18,9 @@
       <module name="engineering-thesis-project.microservices.user-service.main" options="-parameters" />
       <module name="engineering-thesis-project.microservices.user-service.test" options="-parameters" />
       <module name="exercise-service" options="-parameters" />
+      <module name="profile-composite-service" options="-parameters" />
+      <module name="profile-composite-service.main" options="-parameters" />
+      <module name="profile-composite-service.test" options="-parameters" />
       <module name="user-service" options="-parameters" />
       <module name="user-service.main" options="-parameters" />
       <module name="user-service.test" options="-parameters" />
