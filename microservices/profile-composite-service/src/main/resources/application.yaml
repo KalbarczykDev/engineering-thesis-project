@@ -1,12 +1,13 @@
-server.port: 7003
+server.port: 7001
 
 app:
-  profile-service:
-    host: localhost
-    port: 7002
   user-service:
     host: localhost
-    port: 7001
+    port: 7002
+  profile-service:
+    host: localhost
+    port: 7003
+
 
 server.error.include-message: always
 logging:

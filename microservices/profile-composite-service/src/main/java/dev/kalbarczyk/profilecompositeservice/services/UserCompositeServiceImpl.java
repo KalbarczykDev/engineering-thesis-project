@@ -6,7 +6,9 @@ import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 import dev.kalbarczyk.util.http.ServiceUtil;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class UserCompositeServiceImpl implements UserCompositeService {
 
     private final ServiceUtil serviceUtil;
