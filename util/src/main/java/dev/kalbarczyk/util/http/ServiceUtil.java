@@ -3,13 +3,15 @@ package dev.kalbarczyk.util.http;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 public class ServiceUtil {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceUtil.class);
 
     private final String port;
 

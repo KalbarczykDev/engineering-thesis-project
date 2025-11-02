@@ -3,8 +3,8 @@ package dev.kalbarczyk.util.http;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 
-@Slf4j
 @RestControllerAdvice
 class GlobalControllerExceptionHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
 
     @ResponseStatus(NOT_FOUND)
@@ -44,10 +45,10 @@ class GlobalControllerExceptionHandler {
             final Exception ex
     ) {
 
-        val path = request.getPath().pathWithinApplication().value();
-        val message = ex.getMessage();
+        var path = request.getPath().pathWithinApplication().value();
+        var message = ex.getMessage();
 
-        log.debug("Returning HTTP status: {} for path: {}, message: {}", httpStatus, path, message);
+        LOG.debug("Returning HTTP status: {} for path: {}, message: {}", httpStatus, path, message);
         return new HttpErrorInfo(httpStatus, path, message);
     }
 }
