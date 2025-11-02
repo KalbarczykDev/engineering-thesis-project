@@ -3,43 +3,23 @@ package se.magnus.util.http;
 import java.time.ZonedDateTime;
 import org.springframework.http.HttpStatus;
 
-public class HttpErrorInfo {
-  private final ZonedDateTime timestamp;
-  private final String path;
-  private final HttpStatus httpStatus;
-  private final String message;
 
-  public HttpErrorInfo() {
-    timestamp = null;
-    this.httpStatus = null;
-    this.path = null;
-    this.message = null;
-  }
+public record HttpErrorInfo(ZonedDateTime timestamp, String path, HttpStatus httpStatus, String message) {
 
-  public HttpErrorInfo(HttpStatus httpStatus, String path, String message) {
-    timestamp = ZonedDateTime.now();
-    this.httpStatus = httpStatus;
-    this.path = path;
-    this.message = message;
-  }
+    public HttpErrorInfo(
+            final HttpStatus httpStatus,
+            final String path,
+            final String message
+    ) {
+        this(ZonedDateTime.now(), path, httpStatus, message);
+    }
 
-  public ZonedDateTime getTimestamp() {
-    return timestamp;
-  }
+    public int getStatus() {
+        return httpStatus.value();
+    }
 
-  public String getPath() {
-    return path;
-  }
+    public String getError() {
+        return httpStatus.getReasonPhrase();
+    }
 
-  public int getStatus() {
-    return httpStatus.value();
-  }
-
-  public String getError() {
-    return httpStatus.getReasonPhrase();
-  }
-
-  public String getMessage() {
-    return message;
-  }
 }
