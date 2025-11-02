@@ -21,6 +21,9 @@ public class ProfileServiceImpl implements ProfileService {
                 "Hardcoded Profile",
                 "https://example.com/avatar.jpg",
                 "This is a hardcoded bio.",
-                "Earth");
+                "Earth",
+                "2024-01-01T00:00:00Z",
+                "2024-01-01T00:00:00Z"
+        );
     }
 }
