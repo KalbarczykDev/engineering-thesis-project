@@ -4,4 +4,7 @@ pluginManagement {
     }
 }
 
+include ':api'
+include ':util'
+
 include ':microservices:profile-service'

@@ -1,8 +1,0 @@
-server:
-  error:
-    include-message: always
-
-logging:
-  level:
-    root: INFO
-    dev.kalbarczyk: DEBUG
