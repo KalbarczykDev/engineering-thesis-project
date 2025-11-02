@@ -18,7 +18,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile getProfile(int userID) {
         return new Profile(
                 1,
-                "Hardcoded User",
+                "Hardcoded Profile",
                 "https://example.com/avatar.jpg",
                 "This is a hardcoded bio.",
                 "Earth");

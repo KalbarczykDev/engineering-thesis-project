@@ -7,4 +7,5 @@ pluginManagement {
 include ':api'
 include ':util'
 
+include ':microservices:user-service'
 include ':microservices:profile-service'

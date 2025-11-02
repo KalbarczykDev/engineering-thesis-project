@@ -12,7 +12,17 @@
             <option value="$PROJECT_DIR$/api" />
             <option value="$PROJECT_DIR$/microservices" />
             <option value="$PROJECT_DIR$/microservices/profile-service" />
+            <option value="$PROJECT_DIR$/microservices/user-service" />
             <option value="$PROJECT_DIR$/util" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/microservices/user-service" />
+        <option name="gradleJvm" value="24" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/microservices/user-service" />
           </set>
         </option>
       </GradleProjectSettings>
