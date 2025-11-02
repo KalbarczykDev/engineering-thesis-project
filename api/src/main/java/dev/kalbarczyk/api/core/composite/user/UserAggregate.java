@@ -7,7 +7,8 @@ public record UserAggregate(
         String displayName,
         String avatarUrl,
         String bio,
-        String location
+        String location,
+        String joinedAt
 ) {
     //User (username,email)
     //Profile (displayName, avatarUrl, bio, location)

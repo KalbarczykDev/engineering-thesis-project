@@ -33,15 +33,22 @@ public class UserCompositeServiceImpl implements UserCompositeService {
             throw new NotFoundException("No profile found for userId: " + userId);
         }
 
-        return null;
+        return createUserAggregate(user, profile);
     }
 
     private UserAggregate createUserAggregate(
-            final User user, final Profile profile, final String serviceAddress
+            final User user, final Profile profile
     ) {
-
-
-        return null;
+        return new UserAggregate(
+                user.userId(),
+                user.username(),
+                user.email(),
+                profile.displayName(),
+                profile.avatarUrl(),
+                profile.bio(),
+                profile.location(),
+                user.createdAt()
+        );
     }
 
 }
