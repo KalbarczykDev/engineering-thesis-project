@@ -19,6 +19,7 @@ bin/
 
 ### IntelliJ IDEA ###
 .idea
+.idea/**
 *.iws
 *.iml
 *.ipr
@@ -35,3 +36,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+### Mac ###
+.DS_Store
+**/DS_Store
