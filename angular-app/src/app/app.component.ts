@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
 import {HttpClientModule} from "@angular/common/http";
 import {RouterOutlet} from "@angular/router";
-import {HeaderComponent} from "./core/layout/header/header.component";
-import {FooterComponent} from "./core/layout/footer/footer.component";
+import {HeaderComponent} from "./components/header/header.component";
+import {FooterComponent} from "./components/footer/footer.component";
 import {Router} from '@angular/router';
 
 @Component({
