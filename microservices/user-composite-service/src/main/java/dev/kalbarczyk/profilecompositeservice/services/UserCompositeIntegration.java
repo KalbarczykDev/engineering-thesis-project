@@ -69,7 +69,7 @@ public class UserCompositeIntegration {
 
     private String getErrorMessage(final HttpClientErrorException ex) {
         try {
-            return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).message();
+            return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
         } catch (IOException ioex) {
             return ex.getMessage();
         }

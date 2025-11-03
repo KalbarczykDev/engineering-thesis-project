@@ -1,17 +1,36 @@
 package dev.kalbarczyk.util.http;
 
 import java.time.ZonedDateTime;
+
 import org.springframework.http.HttpStatus;
 
 
-public record HttpErrorInfo(ZonedDateTime timestamp, String path, HttpStatus httpStatus, String message) {
+public class HttpErrorInfo {
+    private final ZonedDateTime timestamp;
+    private final String path;
+    private final HttpStatus httpStatus;
+    private final String message;
 
-    public HttpErrorInfo(
-            final HttpStatus httpStatus,
-            final String path,
-            final String message
-    ) {
-        this(ZonedDateTime.now(), path, httpStatus, message);
+    public HttpErrorInfo() {
+        timestamp = null;
+        this.httpStatus = null;
+        this.path = null;
+        this.message = null;
+    }
+
+    public HttpErrorInfo(final HttpStatus httpStatus,final String path,final String message) {
+        timestamp = ZonedDateTime.now();
+        this.httpStatus = httpStatus;
+        this.path = path;
+        this.message = message;
+    }
+
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public int getStatus() {
@@ -22,4 +41,7 @@ public record HttpErrorInfo(ZonedDateTime timestamp, String path, HttpStatus htt
         return httpStatus.getReasonPhrase();
     }
 
+    public String getMessage() {
+        return message;
+    }
 }

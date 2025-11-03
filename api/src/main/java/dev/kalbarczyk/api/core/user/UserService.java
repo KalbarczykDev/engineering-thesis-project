@@ -8,12 +8,12 @@ public interface UserService {
     /**
      * Sample usage: "curl $HOST:$PORT/users/1".
      *
-     * @param userID ID of the user to get
+     * @param userId ID of the user to get
      * @return the user, if found, else null
      */
     @GetMapping(
-            value = "/users/{userID}",
+            value = "/users/{userId}",
             produces = "application/json"
     )
-    User getUser(final @PathVariable int userID);
+    User getUser(final @PathVariable int userId);
 }
