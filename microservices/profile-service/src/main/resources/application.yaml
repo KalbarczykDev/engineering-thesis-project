@@ -5,3 +5,9 @@ logging:
   level:
     root: INFO
     dev.kalbarczyk: DEBUG
+
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 8080

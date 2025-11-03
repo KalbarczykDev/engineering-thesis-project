@@ -14,3 +14,16 @@ logging:
   level:
     root: INFO
     dev.kalbarczyk: DEBUG
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 8080
+
+app:
+  user-service:
+    host: user
+    port: 8080
+  profile-service:
+    host: profile
+    port: 8080
