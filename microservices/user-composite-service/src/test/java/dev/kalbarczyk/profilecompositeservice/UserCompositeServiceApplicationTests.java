@@ -1,6 +1,5 @@
 package dev.kalbarczyk.profilecompositeservice;
 
-import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
@@ -8,6 +7,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.user.User;
+import dev.kalbarczyk.api.exceptions.InvalidInputException;
+import dev.kalbarczyk.api.exceptions.NotFoundException;
 import dev.kalbarczyk.profilecompositeservice.services.UserCompositeIntegration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,10 +57,10 @@ class UserCompositeServiceApplicationTests {
                         ));
 
         when(compositeIntegration.getUser(USER_ID_NOT_FOUND))
-                .thenThrow(new RuntimeException("NOT FOUND: " + USER_ID_NOT_FOUND));
+                .thenThrow(new NotFoundException("NOT FOUND: " + USER_ID_NOT_FOUND));
 
         when(compositeIntegration.getUser(USER_ID_INVALID))
-                .thenThrow(new RuntimeException("INVALID: " + USER_ID_INVALID));
+                .thenThrow(new InvalidInputException("INVALID: " + USER_ID_INVALID));
     }
 
     @Test
@@ -74,8 +75,32 @@ class UserCompositeServiceApplicationTests {
                 .jsonPath("$.username").isEqualTo("username")
                 .jsonPath("$.email").isEqualTo("email")
                 .jsonPath("$.displayName").isEqualTo("displayName");
+    }
 
+    @Test
+    void getUserNotFound(){
+        client.get()
+                .uri("/user-composite/" + USER_ID_NOT_FOUND)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectHeader().contentType(APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.path").isEqualTo("/user-composite/" + USER_ID_NOT_FOUND)
+                .jsonPath("$.message").isEqualTo("NOT FOUND: " + USER_ID_NOT_FOUND);
+    }
 
+    @Test
+    void getUserInvalidInput(){
+        client.get()
+                .uri("/user-composite/" + USER_ID_INVALID)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectHeader().contentType(APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.path").isEqualTo("/user-composite/" + USER_ID_INVALID)
+                .jsonPath("$.message").isEqualTo("INVALID: " + USER_ID_INVALID);
     }
 
 }
