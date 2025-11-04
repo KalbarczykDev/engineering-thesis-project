@@ -1,54 +1,55 @@
 services:
-    user:
-        build: microservices/user-service
-        mem_limit: 512m
-        environment:
-            - SPRING_PROFILES_ACTIVE=docker
-        depends_on:
-          mongodb:
-            condition: service_healthy
+  user:
+    build: microservices/user-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mysql:
+        condition: service_healthy
 
-    profile:
-        build: microservices/profile-service
-        mem_limit: 512m
-        environment:
-            - SPRING_PROFILES_ACTIVE=docker
-        depends_on:
-          mysql:
-            condition: service_healthy
 
-    user-composite:
-        build: microservices/user-composite-service
-        mem_limit: 512m
-        ports:
-            - "8080:8080"
-        environment:
-            - SPRING_PROFILES_ACTIVE=docker
+  profile:
+    build: microservices/profile-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+ #   depends_on:
+ #     mongodb:
+  #      condition: service_healthy
 
-    mongodb:
-      image: mongo:8.0.5
-      mem_limit: 512m
-      ports:
-        - "27017:27017"
-      command: mongod
-      healthcheck:
-        test: echo 'db.runCommand("ping").ok' | mongosh --quiet
-        interval: 5s
-        timeout: 2s
-        retries: 60
+  user-composite:
+    build: microservices/user-composite-service
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
 
-    mysql:
-      image: mysql:9.2.0
-      mem_limit: 512m
-      ports:
-        - "3306:3306"
-      environment:
-        - MYSQL_ROOT_PASSWORD=rootpwd
-        - MYSQL_DATABASE=user-db
-        - MYSQL_USER=user
-        - MYSQL_PASSWORD=pwd
-      healthcheck:
-        test: "/usr/bin/mysql --user=user --password=pwd --execute \"SHOW DATABASES;\""
-        interval: 5s
-        timeout: 2s
-        retries: 60
+ # mongodb:
+#    image: mongo:8.0.5
+ #   mem_limit: 512m
+  #  ports:
+  #    - "27017:27017"
+  #  command: mongod
+  #  healthcheck:
+  #    test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+   #   interval: 5s
+   #   timeout: 2s
+   #   retries: 60
+
+  mysql:
+    image: mysql:9.2.0
+    mem_limit: 512m
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpwd
+      - MYSQL_DATABASE=user-db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pwd
+    healthcheck:
+      test: "/usr/bin/mysql --user=user --password=pwd --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 2s
+      retries: 60
