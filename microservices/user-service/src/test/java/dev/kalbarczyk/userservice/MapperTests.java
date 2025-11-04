@@ -22,12 +22,12 @@ public class MapperTests {
 
         var entity = mapper.apiToEntity(api);
 
-        assertEquals(api.userId(), entity.getId());
-        assertEquals(api.username(), entity.getUsername());
-        assertEquals(api.email(), entity.getEmail());
-        assertEquals(api.password(), entity.getPassword());
-        assertEquals(api.createdAt(), entity.getCreatedAt().toString());
-        assertEquals(api.updatedAt(), entity.getUpdatedAt().toString());
+        assertEquals(api.userId(), entity.id());
+        assertEquals(api.username(), entity.username());
+        assertEquals(api.email(), entity.email());
+        assertEquals(api.password(), entity.password());
+        assertEquals(api.createdAt(), entity.createdAt().toString());
+        assertEquals(api.updatedAt(), entity.updatedAt().toString());
 
 
         var result = mapper.entityToApi(entity);
@@ -53,12 +53,12 @@ public class MapperTests {
 
         var entity = entityList.getFirst();
 
-        assertEquals(api.userId(), entity.getId());
-        assertEquals(api.username(), entity.getUsername());
-        assertEquals(api.email(), entity.getEmail());
-        assertEquals(api.password(), entity.getPassword());
-        assertEquals(api.createdAt(), entity.getCreatedAt().toString());
-        assertEquals(api.updatedAt(), entity.getUpdatedAt().toString());
+        assertEquals(api.userId(), entity.id());
+        assertEquals(api.username(), entity.username());
+        assertEquals(api.email(), entity.email());
+        assertEquals(api.password(), entity.password());
+        assertEquals(api.createdAt(), entity.createdAt().toString());
+        assertEquals(api.updatedAt(), entity.updatedAt().toString());
 
         var resultList = mapper.entityListToApiList(entityList);
         assertEquals(apiList.size(), resultList.size());
