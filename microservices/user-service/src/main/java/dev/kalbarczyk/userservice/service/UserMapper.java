@@ -12,18 +12,18 @@ import java.util.List;
 public interface UserMapper {
     @Mappings(
             {
-                    @Mapping(target = "serviceAddress", ignore = true)
+                    @Mapping(target = "userId", source = "id")
             }
     )
     User entityToApi(final UserEntity entity);
 
     @Mappings({
-            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "id", source = "userId"),
             @Mapping(target = "version", ignore = true)
     })
     UserEntity apiToEntity(final User api);
 
-    List<User> entityListToApiList(final List<User> entity);
+    List<User> entityListToApiList(final List<UserEntity> entity);
 
     List<UserEntity> apiListToEntityList(final List<User> api);
 }
