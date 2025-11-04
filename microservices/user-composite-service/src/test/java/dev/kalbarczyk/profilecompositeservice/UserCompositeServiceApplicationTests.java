@@ -22,9 +22,9 @@ import java.time.LocalDateTime;
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class UserCompositeServiceApplicationTests {
 
-    private static final int USER_ID_OK = 1;
-    private static final int USER_ID_NOT_FOUND = 2;
-    private static final int USER_ID_INVALID = 3;
+    private static final Long USER_ID_OK = 1L;
+    private static final Long USER_ID_NOT_FOUND = 2L;
+    private static final Long USER_ID_INVALID = 3L;
 
     @Autowired
     private WebTestClient client;

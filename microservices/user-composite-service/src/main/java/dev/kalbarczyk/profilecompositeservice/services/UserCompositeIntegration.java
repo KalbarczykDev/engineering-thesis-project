@@ -41,11 +41,11 @@ public class UserCompositeIntegration {
         this.userServiceUrl = "http://" + userServiceHost + ":" + userServicePort + "/users/";
     }
 
-    public User getUser(final int userId) {
+    public User getUser(final Long userId) {
         return getObject(userServiceUrl + userId, User.class);
     }
 
-    public Profile getProfile(final int userId) {
+    public Profile getProfile(final Long userId) {
         return getObject(profileServiceUrl + userId, Profile.class);
     }
 

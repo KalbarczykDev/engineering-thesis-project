@@ -14,5 +14,5 @@ public interface UserCompositeService {
     @GetMapping(
             value = "/user-composite/{userId}",
             produces = "application/json")
-    UserAggregate getUser(final @PathVariable int userId);
+    UserAggregate getUser(final @PathVariable Long userId);
 }

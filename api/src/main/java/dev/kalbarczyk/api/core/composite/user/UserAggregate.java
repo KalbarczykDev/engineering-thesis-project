@@ -1,7 +1,7 @@
 package dev.kalbarczyk.api.core.composite.user;
 
 public record UserAggregate(
-        int userId,
+        Long userId,
         String username,
         String email,
         String displayName,

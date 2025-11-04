@@ -22,7 +22,7 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     }
 
     @Override
-    public UserAggregate getUser(int userId) {
+    public UserAggregate getUser(Long userId) {
 
         var user = integration.getUser(userId);
         if (user == null) {

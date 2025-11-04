@@ -17,7 +17,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Profile getProfile(int userID) {
         return new Profile(
-                1,
+                1L,
                 "Hardcoded Profile",
                 "https://example.com/avatar.jpg",
                 "This is a hardcoded bio.",
