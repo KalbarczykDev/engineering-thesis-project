@@ -5,7 +5,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Table;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@Accessors(chain = true, fluent = true)
+
 public class UserEntity {
 
     @Id

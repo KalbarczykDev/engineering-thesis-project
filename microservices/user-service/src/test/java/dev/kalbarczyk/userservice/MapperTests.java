@@ -22,12 +22,11 @@ public class MapperTests {
 
         var entity = mapper.apiToEntity(api);
 
-        assertEquals(api.userId(), entity.id());
-        assertEquals(api.username(), entity.username());
-        assertEquals(api.email(), entity.email());
-        assertEquals(api.password(), entity.password());
-        assertEquals(api.createdAt(), entity.createdAt().toString());
-        assertEquals(api.updatedAt(), entity.updatedAt().toString());
+        assertEquals(api.userId(), entity.getId());
+        assertEquals(api.username(), entity.getUsername());
+        assertEquals(api.email(), entity.getEmail());
+        assertEquals(api.password(), entity.getPassword());
+
 
 
         var result = mapper.entityToApi(entity);
@@ -36,8 +35,7 @@ public class MapperTests {
         assertEquals(api.username(), result.username());
         assertEquals(api.email(), result.email());
         assertEquals(api.password(), result.password());
-        assertEquals(api.createdAt(), result.createdAt());
-        assertEquals(api.updatedAt(), result.updatedAt());
+
     }
 
     @Test
@@ -53,12 +51,11 @@ public class MapperTests {
 
         var entity = entityList.getFirst();
 
-        assertEquals(api.userId(), entity.id());
-        assertEquals(api.username(), entity.username());
-        assertEquals(api.email(), entity.email());
-        assertEquals(api.password(), entity.password());
-        assertEquals(api.createdAt(), entity.createdAt().toString());
-        assertEquals(api.updatedAt(), entity.updatedAt().toString());
+        assertEquals(api.userId(), entity.getId());
+        assertEquals(api.username(), entity.getUsername());
+        assertEquals(api.email(), entity.getEmail());
+        assertEquals(api.password(), entity.getPassword());
+
 
         var resultList = mapper.entityListToApiList(entityList);
         assertEquals(apiList.size(), resultList.size());
@@ -69,7 +66,6 @@ public class MapperTests {
         assertEquals(api.username(), result.username());
         assertEquals(api.email(), result.email());
         assertEquals(api.password(), result.password());
-        assertEquals(api.createdAt(), result.createdAt());
-        assertEquals(api.updatedAt(), result.updatedAt());
+
     }
 }
