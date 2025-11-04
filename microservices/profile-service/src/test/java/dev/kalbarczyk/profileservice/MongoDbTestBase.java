@@ -1,0 +1,14 @@
+package dev.kalbarczyk.profileservice;
+
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.testcontainers.containers.MongoDBContainer;
+
+public class MongoDbTestBase {
+
+    @ServiceConnection
+    private static MongoDBContainer database = new MongoDBContainer("mongo:8.0.5");
+
+    static{
+        database.start();
+    }
+}
