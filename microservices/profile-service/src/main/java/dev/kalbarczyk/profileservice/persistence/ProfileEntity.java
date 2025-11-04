@@ -38,7 +38,4 @@ public class ProfileEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-
-
-
 }
