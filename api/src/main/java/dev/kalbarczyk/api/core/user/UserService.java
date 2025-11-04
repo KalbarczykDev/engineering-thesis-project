@@ -36,7 +36,7 @@ public interface UserService {
             value = "/users/{userId}",
             produces = "application/json"
     )
-    User getUser(final @PathVariable int userId);
+    User getUser(final @PathVariable Long userId);
 
 
     /**
@@ -51,5 +51,5 @@ public interface UserService {
             consumes = "application/json",
             produces = "application/json"
     )
-    User updateUser(final @PathVariable int userId, final @Valid @RequestBody User body);
+    User updateUser(final @PathVariable Long userId, final @Valid @RequestBody User body);
 }

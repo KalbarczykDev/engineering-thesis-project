@@ -18,7 +18,7 @@ public class MapperTests {
     void mapperTests() {
         assertNotNull(mapper);
 
-        var api = new User(1, "name", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
+        var api = new User(1L, "name", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
 
         var entity = mapper.apiToEntity(api);
 
@@ -42,7 +42,7 @@ public class MapperTests {
     void mapperListTests(){
         assertNotNull(mapper);
 
-        var api = new User(1, "name", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
+        var api = new User(1L, "name", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
 
         var apiList = Collections.singletonList(api);
 
