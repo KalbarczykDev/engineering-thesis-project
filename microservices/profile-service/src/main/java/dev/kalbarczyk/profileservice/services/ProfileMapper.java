@@ -2,19 +2,18 @@ package dev.kalbarczyk.profileservice.services;
 
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.profileservice.persistence.ProfileEntity;
+import dev.kalbarczyk.util.mapping.datetime.LocalDateTimeMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = LocalDateTimeMapper.class)
 public interface ProfileMapper {
 
-    @Mappings({
-            @Mapping(target = "createdAt", expression = "java(entity.getCreatedAt() != null ? entity.getCreatedAt().format(FORMATTER) : null)"),
-            @Mapping(target = "updatedAt", expression = "java(entity.getUpdatedAt() != null ? entity.getUpdatedAt().format(FORMATTER) : null)")
-    })
+    @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "asString")
+    @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "asString")
     Profile entityToApi(ProfileEntity entity);
 
     @Mappings({
