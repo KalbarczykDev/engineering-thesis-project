@@ -1,9 +1,9 @@
 package dev.kalbarczyk.userservice;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static reactor.core.publisher.Flux.just;
 
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.userservice.persistence.UserEntity;
@@ -123,8 +123,8 @@ class UserServiceApplicationTests extends MySqlTestBase {
                 .jsonPath("$.password").isEqualTo("updatedPassword");
 
         var entity = repository.findById(userId).orElseThrow();
-        assertTrue(entity.getUsername().equals("updatedUsername"));
-        assertTrue(entity.getEmail().equals("updated@gmail.com"));
+        assertEquals("updatedUsername", entity.getUsername());
+        assertEquals("updated@gmail.com", entity.getEmail());
     }
 
     @Test
