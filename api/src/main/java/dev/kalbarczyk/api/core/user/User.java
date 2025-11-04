@@ -1,4 +1,14 @@
 package dev.kalbarczyk.api.core.user;
 
-public record User(int userId, String username, String email, String password, String createdAt, String updatedAt) {
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record User(
+        int userId,
+        @NotBlank @Size(min = 3, max = 50) String username,
+        @NotBlank @Email String email,
+        @NotBlank @Size(min = 3, max = 100) String password,
+        String createdAt,
+        String updatedAt) {
 }

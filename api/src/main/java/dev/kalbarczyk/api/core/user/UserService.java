@@ -1,5 +1,6 @@
 package dev.kalbarczyk.api.core.user;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 public interface UserService {
@@ -15,7 +16,7 @@ public interface UserService {
             consumes = "application/json",
             produces = "application/json"
     )
-    User createUser(final @RequestBody User body);
+    User createUser(final @Valid @RequestBody User body);
 
     /**
      * Deletes the user with the given userId.
@@ -50,5 +51,5 @@ public interface UserService {
             consumes = "application/json",
             produces = "application/json"
     )
-    User updateUser(final @PathVariable int userId, final @RequestBody User body);
+    User updateUser(final @PathVariable int userId, final @Valid @RequestBody User body);
 }

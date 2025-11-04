@@ -6,6 +6,7 @@ import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 import dev.kalbarczyk.userservice.persistence.UserRepository;
 import dev.kalbarczyk.util.http.ServiceUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,8 +24,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User createUser(User body) {
-        return null;
+    public User createUser(@Valid User body) {
+        var newEntity = mapper.apiToEntity(body);
+        log.debug("createUser: entity created for userId: {}", body.userId());
+        return mapper.entityToApi(newEntity);
     }
 
     @Override
