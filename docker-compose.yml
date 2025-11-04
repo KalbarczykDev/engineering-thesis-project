@@ -14,9 +14,9 @@ services:
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
- #   depends_on:
- #     mongodb:
-  #      condition: service_healthy
+    depends_on:
+      mongodb:
+        condition: service_healthy
 
   user-composite:
     build: microservices/user-composite-service
@@ -26,17 +26,17 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
 
- # mongodb:
-#    image: mongo:8.0.5
- #   mem_limit: 512m
-  #  ports:
-  #    - "27017:27017"
-  #  command: mongod
-  #  healthcheck:
-  #    test: echo 'db.runCommand("ping").ok' | mongosh --quiet
-   #   interval: 5s
-   #   timeout: 2s
-   #   retries: 60
+  mongodb:
+    image: mongo:8.0.5
+    mem_limit: 512m
+    ports:
+      - "27017:27017"
+    command: mongod
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 5s
+      timeout: 2s
+      retries: 60
 
   mysql:
     image: mysql:9.2.0
