@@ -44,7 +44,7 @@ services:
         - "3306:3306"
       environment:
         - MYSQL_ROOT_PASSWORD=rootpwd
-        - MYSQL_DATABASE=review-db
+        - MYSQL_DATABASE=user-db
         - MYSQL_USER=user
         - MYSQL_PASSWORD=pwd
       healthcheck:
