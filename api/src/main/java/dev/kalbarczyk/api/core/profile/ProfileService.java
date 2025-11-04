@@ -19,39 +19,39 @@ public interface ProfileService {
     Profile createProfile(final @Valid @RequestBody Profile profile);
 
     /**
-     * Deletes the profile for the given userID.
+     * Deletes the profile for the given userId.
      *
-     * @param userID ID of the user to delete the profile for
+     * @param userId ID of the user to delete the profile for
      */
     @DeleteMapping(value = "/profiles")
-    void deleteProfile(final @RequestParam Long userID);
+    void deleteProfile(final @RequestParam Long userId);
 
 
     /**
-     * Gets the profile for the given userID.
+     * Gets the profile for the given userId.
      *
-     * @param userID ID of the user to get the profile for
+     * @param userId ID of the user to get the profile for
      * @return the users profile, if found, else null
      */
     @GetMapping(
-            value = "/profiles/{userID}",
+            value = "/profiles/{userId}",
             produces = "application/json")
-    Profile getProfile(final @PathVariable int userID);
+    Profile getProfile(final @PathVariable Long userId);
 
 
     /**
-     * Updates the profile for the given userID.
+     * Updates the profile for the given userId.
      *
-     * @param userID ID of the user to update the profile for
+     * @param userId Id of the user to update the profile for
      * @param profile   A JSON representation of the updated profile
      * @return A JSON representation of the updated profile
      */
     @PutMapping(
-            value = "/profiles/{userID}",
+            value = "/profiles/{userId}",
             consumes = "application/json",
             produces = "application/json"
     )
-    Profile updateProfile(final @PathVariable int userID, @Valid @RequestBody Profile profile);
+    Profile updateProfile(final @PathVariable Long userId, @Valid @RequestBody Profile profile);
 
 
 }

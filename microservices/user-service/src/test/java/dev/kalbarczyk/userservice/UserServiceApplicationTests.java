@@ -55,7 +55,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
     }
 
     @Test
-    void shouldThrowWhenUserNotFound(){
+    void shouldThrowWhenUserNotFound() {
         var userId = savedUser.getId() + 1;
         client.get()
                 .uri("/users/" + userId)
@@ -69,7 +69,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
     }
 
     @Test
-    void shouldCreateUser(){
+    void shouldCreateUser() {
         var newUser = new User(null, "newUsername", "newEmail@gmail.com", "newPassword", null, null);
         client.post()
                 .uri("/users")
@@ -88,7 +88,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
     }
 
     @Test
-    void shouldThrowWhenCreatingInvalidUser(){
+    void shouldThrowWhenCreatingInvalidUser() {
         var newUser = new User(null, null, "mail.com", "n", null, null);
 
         client.post()
@@ -101,7 +101,6 @@ class UserServiceApplicationTests extends MySqlTestBase {
 
 
     }
-
 
 
     @Test
@@ -128,9 +127,13 @@ class UserServiceApplicationTests extends MySqlTestBase {
     }
 
     @Test
-    void shouldThrowWhenUpdatingUser() {
+    void shouldThrowWhenUpdatingNonExistingUser() {
         var userId = savedUser.getId() + 1;
-        var updated = new User(userId, "wrong", "wrong@mail.com", "pass", null, null);
+        var updated = new User(userId,
+                "wrong",
+                "wrong@mail.com",
+                "pass",
+                savedUser.getCreatedAt().toString(), savedUser.getUpdatedAt().toString());
 
         client.put()
                 .uri("/users/" + userId)
@@ -143,6 +146,21 @@ class UserServiceApplicationTests extends MySqlTestBase {
                 .jsonPath("$.path").isEqualTo("/users/" + userId)
                 .jsonPath("$.message").isEqualTo("No user found for userId: " + userId);
     }
+
+    @Test
+    void shouldThrowWhenUpdatingUserWithInvalidData() {
+        var userId = savedUser.getId();
+        var updated = new User(userId, null, "invalidEmail", "p", null, null);
+
+        client.put()
+                .uri("/users/" + userId)
+                .bodyValue(updated)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
+                .expectHeader().contentType(APPLICATION_JSON);
+    }
+
 
     @Test
     void shouldDeleteUser() {

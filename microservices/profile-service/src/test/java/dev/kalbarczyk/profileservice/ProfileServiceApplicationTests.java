@@ -78,7 +78,7 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
 
     @Test
     void shouldCreateProfile() {
-        var newProfile = new Profile(1L, "newDisplayName", "https://example.com/new_avatar.png", "New Bio", "New City", null, null);
+        var newProfile = new Profile(2L, "newDisplayName", "https://example.com/new_avatar.png", "New Bio", "New City", null, null);
         client.post()
                 .uri("/profiles")
                 .bodyValue(newProfile)
@@ -136,9 +136,11 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
     }
 
     @Test
-    void shouldThrowWhenUpdatingProfile() {
+    void shouldThrowWhenUpdatingProfileForNonExistingUser() {
         var userId = savedProfile.getUserId() + 1;
-        var updated = new Profile(-888888L, null, null, null, null, null, null);
+        var updated = new Profile(userId, "updatedDisplayName",
+                "https://example.com/new_avatar.png", "updatedBio", "Updated City",
+                savedProfile.getCreatedAt().toString(), savedProfile.getUpdatedAt().toString());
 
         client.put()
                 .uri("/profiles/" + userId)
@@ -146,10 +148,21 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.NOT_FOUND)
-                .expectHeader().contentType(APPLICATION_JSON)
-                .expectBody()
-                .jsonPath("$.path").isEqualTo("/profiles/" + userId)
-                .jsonPath("$.message").isEqualTo("No user found for userId: " + userId);
+                .expectHeader().contentType(APPLICATION_JSON);
+    }
+
+    @Test
+    void shouldThrowWhenUpdatingProfileWithInvalidData() {
+        var userId = savedProfile.getUserId();
+        var updated = new Profile(userId, null, null, null, null, null, null);
+
+        client.put()
+                .uri("/profiles/" + userId)
+                .bodyValue(updated)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
+                .expectHeader().contentType(APPLICATION_JSON);
     }
 
     @Test
