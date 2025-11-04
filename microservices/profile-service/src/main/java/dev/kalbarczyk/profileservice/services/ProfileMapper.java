@@ -2,25 +2,26 @@ package dev.kalbarczyk.profileservice.services;
 
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.profileservice.persistence.ProfileEntity;
-import dev.kalbarczyk.util.mapping.datetime.LocalDateTimeMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = LocalDateTimeMapper.class)
+@Mapper(componentModel = "spring")
 public interface ProfileMapper {
 
-    @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "asString")
-    @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "asString")
+    DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+    @Mapping(target = "createdAt",
+            expression = "java(entity.getCreatedAt() != null ? entity.getCreatedAt().format(FORMATTER) : null)")
+    @Mapping(target = "updatedAt",
+            expression = "java(entity.getUpdatedAt() != null ? entity.getUpdatedAt().format(FORMATTER) : null)")
     Profile entityToApi(ProfileEntity entity);
 
-    @Mappings({
-            @Mapping(target = "createdAt", ignore = true),
-            @Mapping(target = "updatedAt", ignore = true),
-            @Mapping(target = "version", ignore = true)
-    })
+    @Mapping(target = "createdAt", expression = "java(api.createdAt() != null ? java.time.LocalDateTime.parse(api.createdAt()) : null)")
+    @Mapping(target = "updatedAt", expression = "java(api.updatedAt() != null ? java.time.LocalDateTime.parse(api.updatedAt()) : null)")
+    @Mapping(target = "version", ignore = true)
     ProfileEntity apiToEntity(Profile api);
 
     List<Profile> entityToApi(List<ProfileEntity> entities);
