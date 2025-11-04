@@ -14,16 +14,24 @@ public class ProfileServiceImpl implements ProfileService {
         this.serviceUtil = serviceUtil;
     }
 
+
+    @Override
+    public Profile createProfile(Profile profile) {
+        return null;
+    }
+
+    @Override
+    public void deleteProfile(Long userID) {
+
+    }
+
     @Override
     public Profile getProfile(int userID) {
-        return new Profile(
-                1L,
-                "Hardcoded Profile",
-                "https://example.com/avatar.jpg",
-                "This is a hardcoded bio.",
-                "Earth",
-                "2024-01-01T00:00:00Z",
-                "2024-01-01T00:00:00Z"
-        );
+        return null;
+    }
+
+    @Override
+    public Profile updateProfile(int userID, Profile profile) {
+        return null;
     }
 }
