@@ -44,7 +44,7 @@ public class PersistenceTests extends MySqlTestBase {
 
 
     @Test
-    void create() {
+    void shouldCreateUser() {
         var newEntity = UserEntity.builder()
                 .username("newuser")
                 .email("email")
@@ -61,7 +61,7 @@ public class PersistenceTests extends MySqlTestBase {
     }
 
     @Test
-    void update() {
+    void shouldUpdateUser() {
         savedEntity.setEmail("newEmail@example.com");
         repository.save(savedEntity);
 
@@ -71,20 +71,20 @@ public class PersistenceTests extends MySqlTestBase {
     }
 
     @Test
-    void delete() {
+    void shouldDeleteUser() {
         repository.delete(savedEntity);
         assertFalse(repository.existsById(savedEntity.getId()));
     }
 
 
     @Test
-    void getByUserId() {
+    void shouldGetByUserId() {
         var foundEntity = repository.findById(savedEntity.getId()).orElseThrow();
         assertEqualsUser(savedEntity, foundEntity);
     }
 
     @Test
-    void duplicateError() {
+    void shouldThrowDuplicateError() {
         assertThrows(DataIntegrityViolationException.class, () -> {
             var entity = UserEntity.builder().username("username").email("email@example.com").password("password").build();
             repository.save(entity);
@@ -92,7 +92,7 @@ public class PersistenceTests extends MySqlTestBase {
     }
 
     @Test
-    void optimisticLockError() {
+    void shouldThrowOptimisticLockError() {
         var entity1 = repository.findById(savedEntity.getId()).orElseThrow();
         var entity2 = repository.findById(savedEntity.getId()).orElseThrow();
 
