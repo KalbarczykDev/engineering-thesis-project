@@ -3,6 +3,7 @@ package dev.kalbarczyk.profilecompositeservice.services;
 import dev.kalbarczyk.api.core.composite.user.UserAggregate;
 import dev.kalbarczyk.api.core.composite.user.UserCompositeService;
 import dev.kalbarczyk.api.core.profile.Profile;
+import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 import dev.kalbarczyk.util.http.ServiceUtil;
@@ -36,6 +37,11 @@ public class UserCompositeServiceImpl implements UserCompositeService {
         }
 
         return createUserAggregate(user, profile);
+    }
+
+    @Override
+    public void createUser(CreateUser body) {
+
     }
 
     private UserAggregate createUserAggregate(

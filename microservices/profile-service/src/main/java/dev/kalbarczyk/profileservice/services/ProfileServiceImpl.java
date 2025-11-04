@@ -2,17 +2,16 @@ package dev.kalbarczyk.profileservice.services;
 
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.ProfileService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
-import dev.kalbarczyk.util.http.ServiceUtil;
 
 @RestController
+@RequiredArgsConstructor
+@Slf4j
 public class ProfileServiceImpl implements ProfileService {
 
-    private final ServiceUtil serviceUtil;
 
-    public ProfileServiceImpl(ServiceUtil serviceUtil) {
-        this.serviceUtil = serviceUtil;
-    }
 
 
     @Override

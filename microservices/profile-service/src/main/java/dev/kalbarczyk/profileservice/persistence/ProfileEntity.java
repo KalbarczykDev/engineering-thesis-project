@@ -1,10 +1,10 @@
 package dev.kalbarczyk.profileservice.persistence;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -32,24 +32,13 @@ public class ProfileEntity {
 
     private String location;
 
-    @Column(nullable = false, updatable = false)
-    @Setter(AccessLevel.NONE)
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    @Setter(AccessLevel.NONE)
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    public void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = createdAt;
-    }
 
-    @PreUpdate
-    public void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
 
 }

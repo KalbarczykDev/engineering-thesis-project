@@ -1,6 +1,14 @@
 server.port: 7003
 server.error.include-message: always
 
+spring.data.mongodb:
+  host: localhost
+  port: 27017
+  database: profile-db
+  username: root
+  password: pwd
+
+
 logging:
   level:
     root: INFO
@@ -11,3 +19,13 @@ logging:
 spring.config.activate.on-profile: docker
 
 server.port: 8080
+
+spring:
+  data:
+    mongodb:
+      host: mongodb
+      port: 27017
+      database: profile-db
+      username: root
+      password: pwd
+

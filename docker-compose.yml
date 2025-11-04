@@ -31,6 +31,10 @@ services:
     mem_limit: 512m
     ports:
       - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pwd
+      MONGO_INITDB_DATABASE: profile-db
     command: mongod
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh --quiet
