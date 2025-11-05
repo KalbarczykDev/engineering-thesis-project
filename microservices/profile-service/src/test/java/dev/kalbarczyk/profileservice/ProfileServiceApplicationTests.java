@@ -1,18 +1,21 @@
 package dev.kalbarczyk.profileservice;
 
 import dev.kalbarczyk.api.core.profile.Profile;
-import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.profileservice.persistence.ProfileEntity;
 import dev.kalbarczyk.profileservice.persistence.ProfileRepository;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.nio.charset.StandardCharsets;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -176,4 +179,81 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
 
         assertTrue(repository.findById(userId).isEmpty());
     }
+
+    @Test
+    void shouldUploadAndRetrieveAvatar() {
+        var userId = savedProfile.getUserId();
+        var content = "fake image content".getBytes(StandardCharsets.UTF_8);
+        var multipartFile = new MockMultipartFile(
+                "file",
+                "avatar.png",
+                "image/png",
+                content
+        );
+
+        client.post()
+                .uri("/profiles/" + userId + "/avatar")
+                .body(BodyInserters.fromMultipartData("file", multipartFile.getResource()))
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.OK)
+                .expectBody(String.class)
+                .value(avatarId -> {
+                    assertTrue(ObjectId.isValid(avatarId));
+
+                    // verify avatar id saved in entity
+                    var entity = repository.findById(userId).orElseThrow();
+                    assertEquals(avatarId, entity.getAvatarUrl());
+                });
+
+        var response = client.get()
+                .uri("/profiles/" + userId + "/avatar")
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.OK)
+                .expectBody(byte[].class)
+                .returnResult();
+
+        assertArrayEquals(content, response.getResponseBody());
+    }
+
+    @Test
+    void shouldThrowWhenRetrievingAvatarWithoutUpload() {
+        var userId = savedProfile.getUserId() + 100;
+
+        var profile = ProfileEntity.builder()
+                .userId(userId)
+                .displayName("UserWithoutAvatar")
+                .bio("No avatar uploaded")
+                .location("Nowhere")
+                .build();
+
+        repository.save(profile);
+
+        client.get()
+                .uri("/profiles/" + userId + "/avatar")
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND)
+                .expectBody()
+                .jsonPath("$.message").isEqualTo("User has no avatar stored");
+    }
+
+    @Test
+    void shouldThrowWhenUploadingAvatarForNonExistingUser() {
+        var userId = savedProfile.getUserId() + 999;
+        var multipartFile = new MockMultipartFile(
+                "file",
+                "avatar.png",
+                "image/png",
+                "fake image content".getBytes(StandardCharsets.UTF_8)
+        );
+
+        client.post()
+                .uri("/profiles/" + userId + "/avatar")
+                .body(BodyInserters.fromMultipartData("file", multipartFile.getResource()))
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND)
+                .expectBody()
+                .jsonPath("$.message").isEqualTo("No Profile found for userId: " + userId);
+    }
+
+
 }

@@ -9,6 +9,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -70,5 +73,15 @@ public class ProfileServiceImpl implements ProfileService {
         log.debug("updateProfile: modified an entity with userId: {}", response.userId());
 
         return response;
+    }
+
+    @Override
+    public String uploadAvatar(Long userId, MultipartFile file) throws IOException {
+        return "";
+    }
+
+    @Override
+    public byte[] getAvatar(Long userId) {
+        return new byte[0];
     }
 }
