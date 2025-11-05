@@ -22,6 +22,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(final @Valid User body) {
+        log.debug("createUser: tries to create a new entity for username: {}", body.username());
+
+        repository.findByEmail(body.email())
+                .ifPresent(u -> {
+                    throw new InvalidInputException("Email already in use: " + body.email());
+                });
+
+
         var newEntity = mapper.apiToEntity(body);
         var savedEntity = repository.save(newEntity);
         log.debug("createUser: entity created for userId: {}", body.userId());
@@ -56,6 +64,12 @@ public class UserServiceImpl implements UserService {
 
         var entity = repository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("No user found for userId: " + userId));
+
+        repository.findByEmail(body.email())
+                .filter(u -> !u.getId().equals(userId))
+                .ifPresent(u -> {
+                    throw new InvalidInputException("Email already in use: " + body.email());
+                });
 
         entity.setUsername(body.username());
         entity.setEmail(body.email());

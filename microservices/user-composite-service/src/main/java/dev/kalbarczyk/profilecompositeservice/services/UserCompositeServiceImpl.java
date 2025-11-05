@@ -4,6 +4,7 @@ import dev.kalbarczyk.api.core.composite.user.UserProfileAggregate;
 import dev.kalbarczyk.api.core.composite.user.UserCompositeService;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.user.User;
+import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,12 @@ public class UserCompositeServiceImpl implements UserCompositeService {
             log.debug("createCompositeUser: creates a new composite entity for username: {}", body.username());
             integration.createUser(body);
             log.debug("createCompositeUser: composite entities created for username: {}", body.username());
-        } catch (RuntimeException e) {
+        }
+        catch (InvalidInputException e) {
+            log.debug("createCompositeUser failed: {}", e.getMessage());
+            throw e;
+        }
+        catch (RuntimeException e) {
             log.warn("createCompositeUser failed", e);
             throw e;
         }
