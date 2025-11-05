@@ -1,9 +1,12 @@
 package dev.kalbarczyk.profilecompositeservice.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kalbarczyk.api.core.composite.user.UserAggregate;
 import dev.kalbarczyk.api.core.profile.Profile;
+import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,16 +14,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.util.http.HttpErrorInfo;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 @Component
+@Slf4j
 public class UserCompositeIntegration {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserCompositeIntegration.class);
 
     private final RestTemplate restTemplate;
     private final ObjectMapper mapper;
@@ -41,29 +42,95 @@ public class UserCompositeIntegration {
         this.userServiceUrl = "http://" + userServiceHost + ":" + userServicePort + "/users/";
     }
 
+    public void createUser(final User body) {
+        try {
+            log.debug("Will post a new user to URL: {}", userServiceUrl);
+
+            var user = restTemplate.postForObject(userServiceUrl, body, User.class);
+
+            log.debug("Will post new profile to URL: {}", profileServiceUrl);
+
+            assert user != null;
+            var minimalProfile = new Profile(user.userId(),
+                    user.username(),
+                    null,
+                    "I am " + user.username(),
+                    null,
+                    null,
+                    null);
+
+            restTemplate.postForObject(profileServiceUrl, minimalProfile, Profile.class);
+            log.debug("Created user and profile entities for username: {}", body.username());
+
+
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
+    }
+
     public User getUser(final Long userId) {
-        return getObject(userServiceUrl + userId, User.class);
+        try {
+            var url = userServiceUrl + userId;
+            log.debug("Will get a user from URL: {}", url);
+
+            return restTemplate.getForObject(url, User.class);
+
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
     }
 
     public Profile getProfile(final Long userId) {
-        return getObject(profileServiceUrl + userId, Profile.class);
+        try {
+            var url = profileServiceUrl + userId;
+            log.debug("Will get a profile from URL: {}", url);
+
+            return restTemplate.getForObject(url, Profile.class);
+
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
     }
 
-    private <T> T getObject(final String url, final Class<T> responseType) {
+    public void deleteUser(final Long userId) {
         try {
-            LOG.debug("Calling service on URL: {}", url);
-            var response = restTemplate.getForObject(url, responseType);
-            LOG.debug("Received response from {}", url);
-            return response;
-        } catch (HttpClientErrorException ex) {
-            var status = HttpStatus.resolve(ex.getStatusCode().value());
-            if (status == HttpStatus.NOT_FOUND)
-                throw new NotFoundException(getErrorMessage(ex));
-            if (status == HttpStatus.UNPROCESSABLE_ENTITY)
-                throw new InvalidInputException(getErrorMessage(ex));
+            var userUrl = userServiceUrl + userId;
+            log.debug("Will delete a user from URL: {}", userUrl);
+            restTemplate.delete(userUrl);
 
-            LOG.warn("Unexpected HTTP error: {}, body: {}", ex.getStatusCode(), ex.getResponseBodyAsString());
-            throw ex;
+            var profileUrl = profileServiceUrl + userId;
+            log.debug("Will delete a profile from URL: {}", profileUrl);
+            restTemplate.delete(profileUrl);
+
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
+    }
+
+    public void deleteProfile(final Long userId) {
+        try {
+            var profileUrl = profileServiceUrl + userId;
+            log.debug("Will call the deleteProfile API on URL: {}", profileUrl);
+            restTemplate.delete(profileUrl);
+
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
+    }
+
+
+    private RuntimeException handleHttpClientException(final HttpClientErrorException ex) {
+        switch (HttpStatus.resolve(ex.getStatusCode().value())) {
+            case NOT_FOUND:
+                return new NotFoundException(getErrorMessage(ex));
+
+            case UNPROCESSABLE_ENTITY:
+                return new InvalidInputException(getErrorMessage(ex));
+            case null:
+            default:
+                log.warn("Got an unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
+                log.warn("Error body: {}", ex.getResponseBodyAsString());
+                return ex;
         }
     }
 
@@ -74,4 +141,6 @@ public class UserCompositeIntegration {
             return ex.getMessage();
         }
     }
+
+
 }

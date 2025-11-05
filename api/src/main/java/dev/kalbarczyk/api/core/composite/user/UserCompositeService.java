@@ -1,11 +1,20 @@
 package dev.kalbarczyk.api.core.composite.user;
 
-import dev.kalbarczyk.api.core.user.CreateUser;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import dev.kalbarczyk.api.core.user.User;
+import org.springframework.web.bind.annotation.*;
 
 public interface UserCompositeService {
+
+    /**
+     * Creates a new user and minimal profile
+     *
+     * @param body The user to create
+     */
+    @PostMapping(
+            value = "/user-composite",
+            consumes = "application/json"
+    )
+    void createUser(final @RequestBody User body);
 
     /**
      * Gets the user aggregate for the given userId.
@@ -18,14 +27,14 @@ public interface UserCompositeService {
             produces = "application/json")
     UserAggregate getUser(final @PathVariable Long userId);
 
+
     /**
-     * Creates a new user and minimal profile
+     * Deletes a user and associated profile
      *
-     * @param body The user to create
+     * @param userId ID of the user
      */
-    @PostMapping(
-            value = "/user-composite",
-            consumes = "application/json"
-    )
-    void createUser(final CreateUser body);
+    @DeleteMapping(value = "/user-composite/{userId}")
+    void deleteUser(final @PathVariable Long userId);
+
+
 }

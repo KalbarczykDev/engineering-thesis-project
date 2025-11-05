@@ -3,27 +3,35 @@ package dev.kalbarczyk.profilecompositeservice.services;
 import dev.kalbarczyk.api.core.composite.user.UserAggregate;
 import dev.kalbarczyk.api.core.composite.user.UserCompositeService;
 import dev.kalbarczyk.api.core.profile.Profile;
-import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
-import dev.kalbarczyk.util.http.ServiceUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
+@RequiredArgsConstructor
+@Slf4j
 public class UserCompositeServiceImpl implements UserCompositeService {
 
-    private final ServiceUtil serviceUtil;
-    private UserCompositeIntegration integration;
+    private final UserCompositeIntegration integration;
 
-    public UserCompositeServiceImpl(
-            ServiceUtil serviceUtil, UserCompositeIntegration integration) {
+    @Override
+    public void createUser(final User body) {
+        try {
+            log.debug("createCompositeUser: creates a new composite entity for username: {}", body.username());
+            integration.createUser(body);
+            log.debug("createCompositeUser: composite entities created for username: {}", body.username());
+        } catch (RuntimeException e) {
+            log.warn("createCompositeUser failed", e);
+            throw e;
+        }
 
-        this.serviceUtil = serviceUtil;
-        this.integration = integration;
     }
 
     @Override
-    public UserAggregate getUser(Long userId) {
+    public UserAggregate getUser(final Long userId) {
 
         var user = integration.getUser(userId);
         if (user == null) {
@@ -40,9 +48,15 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     }
 
     @Override
-    public void createUser(CreateUser body) {
+    public void deleteUser(final Long userId) {
+        log.debug("deleteCompositeUser: deletes composite entity for userId: {}", userId);
 
+        integration.deleteUser(userId);
+        integration.deleteProfile(userId);
+
+        log.debug("deleteCompositeUser: composite entities deleted for userId: {}", userId);
     }
+
 
     private UserAggregate createUserAggregate(
             final User user, final Profile profile
@@ -58,5 +72,6 @@ public class UserCompositeServiceImpl implements UserCompositeService {
                 user.createdAt()
         );
     }
+
 
 }
