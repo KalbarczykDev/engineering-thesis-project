@@ -1,5 +1,7 @@
 package dev.kalbarczyk.profileservice.services;
 
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.ProfileService;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
@@ -8,10 +10,16 @@ import dev.kalbarczyk.profileservice.persistence.ProfileRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +28,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository repository;
     private final ProfileMapper mapper;
+    private final GridFSBucket bucket;
 
 
     @Override
@@ -64,7 +73,6 @@ public class ProfileServiceImpl implements ProfileService {
 
         entity.setDisplayName(profile.displayName());
         entity.setBio(profile.bio());
-        entity.setAvatarUrl(profile.avatarUrl());
         entity.setLocation(profile.location());
 
         var savedEntity = repository.save(entity);
@@ -73,15 +81,5 @@ public class ProfileServiceImpl implements ProfileService {
         log.debug("updateProfile: modified an entity with userId: {}", response.userId());
 
         return response;
-    }
-
-    @Override
-    public String uploadAvatar(Long userId, MultipartFile file) throws IOException {
-        return "";
-    }
-
-    @Override
-    public byte[] getAvatar(Long userId) {
-        return new byte[0];
     }
 }

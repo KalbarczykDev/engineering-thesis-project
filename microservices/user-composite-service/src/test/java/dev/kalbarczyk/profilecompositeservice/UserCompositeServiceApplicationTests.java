@@ -49,7 +49,6 @@ class UserCompositeServiceApplicationTests {
                         new Profile(
                                 USER_ID_OK,
                                 "displayName",
-                                "https://via.placeholder.com/400x400",
                                 "bio",
                                 "location",
                                 LocalDateTime.now().toString(),

@@ -8,7 +8,6 @@ public record Profile(
         Long userId,
         @NotBlank @Size(min = 1, max = 100)
         String displayName,
-        String avatarUrl,
         @Size(max = 2000)
         String bio,
         String location,

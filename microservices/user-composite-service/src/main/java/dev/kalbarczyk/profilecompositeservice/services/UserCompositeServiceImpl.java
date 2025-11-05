@@ -72,7 +72,6 @@ public class UserCompositeServiceImpl implements UserCompositeService {
                 user.username(),
                 user.email(),
                 profile.displayName(),
-                profile.avatarUrl(),
                 profile.bio(),
                 profile.location(),
                 user.createdAt()

@@ -50,7 +50,6 @@ public class UserCompositeIntegration {
             assert user != null;
             var minimalProfile = new Profile(user.userId(),
                     user.username(),
-                    null,
                     "I am " + user.username(),
                     null,
                     null,

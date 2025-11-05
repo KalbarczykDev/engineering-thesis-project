@@ -1,6 +1,7 @@
 package dev.kalbarczyk.api.core.profile;
 
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,32 +56,5 @@ public interface ProfileService {
             produces = "application/json"
     )
     Profile updateProfile(final @PathVariable Long userId, @Valid @RequestBody Profile profile);
-
-    /**
-     * Uploads an avatar image for the given userId.
-     *
-     * @param userId ID of the user to upload the avatar for
-     * @param file   The avatar image file
-     * @return A JSON representation containing the URL of the uploaded avatar
-     */
-    @PostMapping(
-            value = "/profiles/{userId}/avatar",
-            consumes = "multipart/form-data",
-            produces = "application/json"
-    )
-    String uploadAvatar(final @PathVariable Long userId, final @RequestParam MultipartFile file) throws IOException;
-
-    /**
-     * Downloads the avatar image for the given userId.
-     *
-     * @param userId ID of the user to download the avatar for
-     * @return The avatar image file
-     */
-    @GetMapping(
-            value = "/profiles/{userId}/avatar",
-            produces = "image/jpeg"
-    )
-    byte[] getAvatar(final @PathVariable Long userId);
-
 
 }

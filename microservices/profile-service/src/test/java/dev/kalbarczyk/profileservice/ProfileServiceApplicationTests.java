@@ -3,17 +3,12 @@ package dev.kalbarczyk.profileservice;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.profileservice.persistence.ProfileEntity;
 import dev.kalbarczyk.profileservice.persistence.ProfileRepository;
-import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.BodyInserters;
-
-import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -40,7 +35,6 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
                 .userId(1L)
                 .displayName("test")
                 .bio("Test Bio")
-                .avatarUrl("https://example.com/avatar.png")
                 .location("Test City")
                 .build();
 
@@ -60,7 +54,6 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
                 .jsonPath("$.userId").isEqualTo(userId)
                 .jsonPath("$.displayName").isEqualTo(savedProfile.getDisplayName())
                 .jsonPath("$.bio").isEqualTo(savedProfile.getBio())
-                .jsonPath("$.avatarUrl").isEqualTo(savedProfile.getAvatarUrl())
                 .jsonPath("$.location").isEqualTo(savedProfile.getLocation());
 
     }
@@ -81,7 +74,7 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
 
     @Test
     void shouldCreateProfile() {
-        var newProfile = new Profile(2L, "newDisplayName", "https://example.com/new_avatar.png", "New Bio", "New City", null, null);
+        var newProfile = new Profile(2L, "newDisplayName", "New Bio", "New City", null, null);
         client.post()
                 .uri("/profiles")
                 .bodyValue(newProfile)
@@ -93,7 +86,6 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
                 .jsonPath("$.userId").isEqualTo(newProfile.userId())
                 .jsonPath("$.displayName").isEqualTo(newProfile.displayName())
                 .jsonPath("$.bio").isEqualTo(newProfile.bio())
-                .jsonPath("$.avatarUrl").isEqualTo(newProfile.avatarUrl())
                 .jsonPath("$.location").isEqualTo(newProfile.location())
                 .jsonPath("$.createdAt").isNotEmpty()
                 .jsonPath("$.updatedAt").isNotEmpty();
@@ -102,7 +94,7 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
 
     @Test
     void shouldThrowWhenCreatingInvalidProfile() {
-        var newProfile = new Profile(-888888L, null, null, null, null, null, null);
+        var newProfile = new Profile(-888888L, null, null, null, null, null);
         client.post()
                 .uri("/profiles")
                 .bodyValue(newProfile)
@@ -116,7 +108,7 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
     @Test
     void shouldUpdateProfile() {
         var userId = savedProfile.getUserId();
-        var updated = new Profile(1L, "updatedDisplayName", "https://example.com/new_avatar.png", "updatedBio", "Updated City", savedProfile.getCreatedAt().toString(), savedProfile.getUpdatedAt().toString());
+        var updated = new Profile(1L, "updatedDisplayName", "updatedBio", "Updated City", savedProfile.getCreatedAt().toString(), savedProfile.getUpdatedAt().toString());
 
         client.put()
                 .uri("/profiles/" + userId)
@@ -129,7 +121,6 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
                 .jsonPath("$.userId").isEqualTo(userId)
                 .jsonPath("$.displayName").isEqualTo(updated.displayName())
                 .jsonPath("$.location").isEqualTo(updated.location())
-                .jsonPath("$.avatarUrl").isEqualTo(updated.avatarUrl())
                 .jsonPath("$.bio").isEqualTo(updated.bio());
 
         var entity = repository.findById(userId).orElseThrow();
@@ -142,7 +133,7 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
     void shouldThrowWhenUpdatingProfileForNonExistingUser() {
         var userId = savedProfile.getUserId() + 1;
         var updated = new Profile(userId, "updatedDisplayName",
-                "https://example.com/new_avatar.png", "updatedBio", "Updated City",
+                "updatedBio", "Updated City",
                 savedProfile.getCreatedAt().toString(), savedProfile.getUpdatedAt().toString());
 
         client.put()
@@ -157,7 +148,7 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
     @Test
     void shouldThrowWhenUpdatingProfileWithInvalidData() {
         var userId = savedProfile.getUserId();
-        var updated = new Profile(userId, null, null, null, null, null, null);
+        var updated = new Profile(userId, null, null, null, null, null);
 
         client.put()
                 .uri("/profiles/" + userId)
@@ -178,81 +169,6 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
                 .expectStatus().isEqualTo(HttpStatus.OK);
 
         assertTrue(repository.findById(userId).isEmpty());
-    }
-
-    @Test
-    void shouldUploadAndRetrieveAvatar() {
-        var userId = savedProfile.getUserId();
-        var content = "fake image content".getBytes(StandardCharsets.UTF_8);
-        var multipartFile = new MockMultipartFile(
-                "file",
-                "avatar.png",
-                "image/png",
-                content
-        );
-
-        client.post()
-                .uri("/profiles/" + userId + "/avatar")
-                .body(BodyInserters.fromMultipartData("file", multipartFile.getResource()))
-                .exchange()
-                .expectStatus().isEqualTo(HttpStatus.OK)
-                .expectBody(String.class)
-                .value(avatarId -> {
-                    assertTrue(ObjectId.isValid(avatarId));
-
-                    // verify avatar id saved in entity
-                    var entity = repository.findById(userId).orElseThrow();
-                    assertEquals(avatarId, entity.getAvatarUrl());
-                });
-
-        var response = client.get()
-                .uri("/profiles/" + userId + "/avatar")
-                .exchange()
-                .expectStatus().isEqualTo(HttpStatus.OK)
-                .expectBody(byte[].class)
-                .returnResult();
-
-        assertArrayEquals(content, response.getResponseBody());
-    }
-
-    @Test
-    void shouldThrowWhenRetrievingAvatarWithoutUpload() {
-        var userId = savedProfile.getUserId() + 100;
-
-        var profile = ProfileEntity.builder()
-                .userId(userId)
-                .displayName("UserWithoutAvatar")
-                .bio("No avatar uploaded")
-                .location("Nowhere")
-                .build();
-
-        repository.save(profile);
-
-        client.get()
-                .uri("/profiles/" + userId + "/avatar")
-                .exchange()
-                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND)
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("User has no avatar stored");
-    }
-
-    @Test
-    void shouldThrowWhenUploadingAvatarForNonExistingUser() {
-        var userId = savedProfile.getUserId() + 999;
-        var multipartFile = new MockMultipartFile(
-                "file",
-                "avatar.png",
-                "image/png",
-                "fake image content".getBytes(StandardCharsets.UTF_8)
-        );
-
-        client.post()
-                .uri("/profiles/" + userId + "/avatar")
-                .body(BodyInserters.fromMultipartData("file", multipartFile.getResource()))
-                .exchange()
-                .expectStatus().isEqualTo(HttpStatus.NOT_FOUND)
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("No Profile found for userId: " + userId);
     }
 
 

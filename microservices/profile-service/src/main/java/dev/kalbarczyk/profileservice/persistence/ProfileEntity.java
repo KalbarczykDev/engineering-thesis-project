@@ -26,7 +26,6 @@ public class ProfileEntity {
 
     private String displayName;
 
-    private String avatarUrl;
 
     private String bio;
 

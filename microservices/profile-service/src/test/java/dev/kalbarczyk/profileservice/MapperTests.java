@@ -22,7 +22,6 @@ public class MapperTests {
 
         var api = new Profile(1L,
                 "DisplayName",
-                "http://avatar.url",
                 "Bio",
                 "Location",
                 LocalDateTime.now().toString(),
@@ -32,7 +31,6 @@ public class MapperTests {
 
         assertEquals(api.userId(), entity.getUserId());
         assertEquals(api.displayName(), entity.getDisplayName());
-        assertEquals(api.avatarUrl(), entity.getAvatarUrl());
         assertEquals(api.bio(), entity.getBio());
         assertEquals(api.location(), entity.getLocation());
 
@@ -40,7 +38,6 @@ public class MapperTests {
 
         assertEquals(api.userId(), result.userId());
         assertEquals(api.displayName(), result.displayName());
-        assertEquals(api.avatarUrl(), result.avatarUrl());
         assertEquals(api.bio(), result.bio());
         assertEquals(api.location(), result.location());
         assertEquals(api.createdAt(), result.createdAt());
@@ -53,7 +50,6 @@ public class MapperTests {
 
         var api = new Profile(1L,
                 "DisplayName",
-                "http://avatar.url",
                 "Bio",
                 "Location",
                 LocalDateTime.now().toString(),
@@ -68,7 +64,6 @@ public class MapperTests {
 
         assertEquals(api.userId(), entity.getUserId());
         assertEquals(api.displayName(), entity.getDisplayName());
-        assertEquals(api.avatarUrl(), entity.getAvatarUrl());
         assertEquals(api.bio(), entity.getBio());
         assertEquals(api.location(), entity.getLocation());
     }

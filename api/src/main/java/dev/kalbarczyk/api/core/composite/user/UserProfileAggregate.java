@@ -5,7 +5,6 @@ public record UserProfileAggregate(
         String username,
         String email,
         String displayName,
-        String avatarUrl,
         String bio,
         String location,
         String joinedAt

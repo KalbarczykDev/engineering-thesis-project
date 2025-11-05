@@ -24,7 +24,6 @@ public class PersistenceTests extends MongoDbTestBase {
         var entity = ProfileEntity.builder()
                 .userId(1L)
                 .displayName("test")
-                .avatarUrl("https://avatars.example.com")
                 .location("Test City")
                 .bio("This is a test profile.")
                 .build();
@@ -39,7 +38,6 @@ public class PersistenceTests extends MongoDbTestBase {
         var entity = ProfileEntity.builder()
                 .userId(2L)
                 .displayName("test")
-                .avatarUrl("https://avatars.example.com")
                 .location("Test City")
                 .bio("This is a test profile.")
                 .build();
@@ -79,7 +77,6 @@ public class PersistenceTests extends MongoDbTestBase {
             var entity = ProfileEntity.builder()
                     .userId(1L)
                     .displayName("test")
-                    .avatarUrl("https://avatars.example.com")
                     .location("Test City")
                     .bio("This is a test profile.")
                     .build();
@@ -109,7 +106,6 @@ public class PersistenceTests extends MongoDbTestBase {
     private void assertEqualsProfile(final ProfileEntity entity, final ProfileEntity savedEntity) {
         assert entity.getUserId().equals(savedEntity.getUserId());
         assert entity.getDisplayName().equals(savedEntity.getDisplayName());
-        assert entity.getAvatarUrl().equals(savedEntity.getAvatarUrl());
         assert entity.getLocation().equals(savedEntity.getLocation());
         assert entity.getBio().equals(savedEntity.getBio());
     }
