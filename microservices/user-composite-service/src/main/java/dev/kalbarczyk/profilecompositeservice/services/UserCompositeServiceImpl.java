@@ -1,6 +1,6 @@
 package dev.kalbarczyk.profilecompositeservice.services;
 
-import dev.kalbarczyk.api.core.composite.user.UserAggregate;
+import dev.kalbarczyk.api.core.composite.user.UserProfileAggregate;
 import dev.kalbarczyk.api.core.composite.user.UserCompositeService;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.user.User;
@@ -31,7 +31,7 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     }
 
     @Override
-    public UserAggregate getUser(final Long userId) {
+    public UserProfileAggregate getUserProfile(final Long userId) {
 
         var user = integration.getUser(userId);
         if (user == null) {
@@ -58,10 +58,10 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     }
 
 
-    private UserAggregate createUserAggregate(
+    private UserProfileAggregate createUserAggregate(
             final User user, final Profile profile
     ) {
-        return new UserAggregate(
+        return new UserProfileAggregate(
                 user.userId(),
                 user.username(),
                 user.email(),

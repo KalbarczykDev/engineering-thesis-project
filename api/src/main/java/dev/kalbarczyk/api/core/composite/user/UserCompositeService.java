@@ -17,15 +17,15 @@ public interface UserCompositeService {
     void createUser(final @RequestBody User body);
 
     /**
-     * Gets the user aggregate for the given userId.
+     * Gets the user and profile information.
      *
      * @param userId ID of the user
      * @return the composite user info, if found, else null
      */
     @GetMapping(
-            value = "/user-composite/{userId}",
+            value = "/user-composite/{userId}/profile",
             produces = "application/json")
-    UserAggregate getUser(final @PathVariable Long userId);
+    UserProfileAggregate getUserProfile(final @PathVariable Long userId);
 
 
     /**

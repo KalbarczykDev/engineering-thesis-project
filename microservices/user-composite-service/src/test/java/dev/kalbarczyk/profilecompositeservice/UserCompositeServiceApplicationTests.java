@@ -76,7 +76,7 @@ class UserCompositeServiceApplicationTests {
     }
 
     @Test
-    void shouldDeleteUser(){
+    void shouldDeleteUser() {
         client.delete()
                 .uri("/user-composite/" + USER_ID_OK)
                 .accept(APPLICATION_JSON)
@@ -87,7 +87,7 @@ class UserCompositeServiceApplicationTests {
 
     @Test
     void getUserById() {
-        client.get().uri("/user-composite/" + USER_ID_OK)
+        client.get().uri("/user-composite/" + USER_ID_OK + "/profile")
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
@@ -102,26 +102,26 @@ class UserCompositeServiceApplicationTests {
     @Test
     void getUserNotFound() {
         client.get()
-                .uri("/user-composite/" + USER_ID_NOT_FOUND)
+                .uri("/user-composite/" + USER_ID_NOT_FOUND + "/profile")
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("$.path").isEqualTo("/user-composite/" + USER_ID_NOT_FOUND)
+                .jsonPath("$.path").isEqualTo("/user-composite/" + USER_ID_NOT_FOUND + "/profile")
                 .jsonPath("$.message").isEqualTo("NOT FOUND: " + USER_ID_NOT_FOUND);
     }
 
     @Test
     void getUserInvalidInput() {
         client.get()
-                .uri("/user-composite/" + USER_ID_INVALID)
+                .uri("/user-composite/" + USER_ID_INVALID + "/profile")
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("$.path").isEqualTo("/user-composite/" + USER_ID_INVALID)
+                .jsonPath("$.path").isEqualTo("/user-composite/" + USER_ID_INVALID + "/profile")
                 .jsonPath("$.message").isEqualTo("INVALID: " + USER_ID_INVALID);
     }
 
