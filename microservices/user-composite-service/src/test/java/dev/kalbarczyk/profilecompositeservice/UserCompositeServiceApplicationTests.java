@@ -64,6 +64,28 @@ class UserCompositeServiceApplicationTests {
     }
 
     @Test
+    void shouldCreateUser() {
+        var user = new User(null, "username", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
+        client.post()
+                .uri("/user-composite")
+                .bodyValue(user)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody();
+    }
+
+    @Test
+    void shouldDeleteUser(){
+        client.delete()
+                .uri("/user-composite/" + USER_ID_OK)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody();
+    }
+
+    @Test
     void getUserById() {
         client.get().uri("/user-composite/" + USER_ID_OK)
                 .accept(APPLICATION_JSON)
@@ -78,7 +100,7 @@ class UserCompositeServiceApplicationTests {
     }
 
     @Test
-    void getUserNotFound(){
+    void getUserNotFound() {
         client.get()
                 .uri("/user-composite/" + USER_ID_NOT_FOUND)
                 .accept(APPLICATION_JSON)
@@ -91,7 +113,7 @@ class UserCompositeServiceApplicationTests {
     }
 
     @Test
-    void getUserInvalidInput(){
+    void getUserInvalidInput() {
         client.get()
                 .uri("/user-composite/" + USER_ID_INVALID)
                 .accept(APPLICATION_JSON)
