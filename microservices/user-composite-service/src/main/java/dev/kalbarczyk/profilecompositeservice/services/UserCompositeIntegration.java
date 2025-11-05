@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.data.util.Pair;
 import dev.kalbarczyk.util.http.HttpErrorInfo;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class UserCompositeIntegration {
         this.userServiceUrl = "http://" + userServiceHost + ":" + userServicePort + "/users";
     }
 
-    public void createUser(final User body) {
+    public Pair<User,Profile> createUserAndProfile(final User body) {
         try {
             log.debug("Will post a new user to URL: {}", userServiceUrl);
 
@@ -58,7 +59,7 @@ public class UserCompositeIntegration {
             restTemplate.postForObject(profileServiceUrl, minimalProfile, Profile.class);
             log.debug("Created user and profile entities for username: {}", body.username());
 
-
+            return Pair.of(user, minimalProfile);
         } catch (HttpClientErrorException ex) {
             throw handleHttpClientException(ex);
         }

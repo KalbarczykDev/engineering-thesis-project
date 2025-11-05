@@ -1,5 +1,6 @@
 package dev.kalbarczyk.profilecompositeservice;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.util.Pair;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -60,6 +62,16 @@ class UserCompositeServiceApplicationTests {
 
         when(compositeIntegration.getUser(USER_ID_INVALID))
                 .thenThrow(new InvalidInputException("INVALID: " + USER_ID_INVALID));
+
+        when(compositeIntegration.createUserAndProfile(any(User.class)))
+                .thenReturn(Pair.of(
+                        new User(1L, "username", "email", "password",
+                                LocalDateTime.now().toString(),
+                                LocalDateTime.now().toString()),
+                        new Profile(1L, "displayName", "bio", "location",
+                                LocalDateTime.now().toString(),
+                                LocalDateTime.now().toString())
+                ));
     }
 
     @Test

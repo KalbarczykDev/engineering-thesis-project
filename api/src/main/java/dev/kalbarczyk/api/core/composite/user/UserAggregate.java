@@ -1,6 +1,6 @@
 package dev.kalbarczyk.api.core.composite.user;
 
-public record UserProfileAggregate(
+public record UserAggregate(
         Long userId,
         String username,
         String email,

@@ -1,6 +1,6 @@
 package dev.kalbarczyk.profilecompositeservice.services;
 
-import dev.kalbarczyk.api.core.composite.user.UserProfileAggregate;
+import dev.kalbarczyk.api.core.composite.user.UserAggregate;
 import dev.kalbarczyk.api.core.composite.user.UserCompositeService;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.user.User;
@@ -19,17 +19,19 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     private final UserCompositeIntegration integration;
 
     @Override
-    public void createUser(final User body) {
+    public UserAggregate createUser(final User body) {
         try {
             log.debug("createCompositeUser: creates a new composite entity for username: {}", body.username());
-            integration.createUser(body);
+            var result = integration.createUserAndProfile(body);
+            var user = result.getFirst();
+            var profile = result.getSecond();
+
             log.debug("createCompositeUser: composite entities created for username: {}", body.username());
-        }
-        catch (InvalidInputException e) {
+            return createUserAggregate(user, profile);
+        } catch (InvalidInputException e) {
             log.debug("createCompositeUser failed: {}", e.getMessage());
             throw e;
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             log.warn("createCompositeUser failed", e);
             throw e;
         }
@@ -37,7 +39,7 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     }
 
     @Override
-    public UserProfileAggregate getUserProfile(final Long userId) {
+    public UserAggregate getUserProfile(final Long userId) {
 
         var user = integration.getUser(userId);
         if (user == null) {
@@ -64,10 +66,10 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     }
 
 
-    private UserProfileAggregate createUserAggregate(
+    private UserAggregate createUserAggregate(
             final User user, final Profile profile
     ) {
-        return new UserProfileAggregate(
+        return new UserAggregate(
                 user.userId(),
                 user.username(),
                 user.email(),

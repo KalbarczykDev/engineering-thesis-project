@@ -12,9 +12,10 @@ public interface UserCompositeService {
      */
     @PostMapping(
             value = "/user-composite",
-            consumes = "application/json"
+            consumes = "application/json",
+            produces = "application/json"
     )
-    void createUser(final @RequestBody User body);
+    UserAggregate createUser(final @RequestBody User body);
 
     /**
      * Gets the user and profile information.
@@ -25,7 +26,7 @@ public interface UserCompositeService {
     @GetMapping(
             value = "/user-composite/{userId}/profile",
             produces = "application/json")
-    UserProfileAggregate getUserProfile(final @PathVariable Long userId);
+    UserAggregate getUserProfile(final @PathVariable Long userId);
 
 
     /**
