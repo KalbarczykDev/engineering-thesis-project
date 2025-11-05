@@ -28,4 +28,5 @@ spring:
       database: profile-db
       username: root
       password: pwd
+      authentication-database: admin
 
