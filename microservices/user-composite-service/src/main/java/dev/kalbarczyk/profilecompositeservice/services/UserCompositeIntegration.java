@@ -38,8 +38,8 @@ public class UserCompositeIntegration {
     ) {
         this.restTemplate = restTemplate;
         this.mapper = objectMapper;
-        this.profileServiceUrl = "http://" + profileServiceHost + ":" + profileServicePort + "/profiles/";
-        this.userServiceUrl = "http://" + userServiceHost + ":" + userServicePort + "/users/";
+        this.profileServiceUrl = "http://" + profileServiceHost + ":" + profileServicePort + "/profiles";
+        this.userServiceUrl = "http://" + userServiceHost + ":" + userServicePort + "/users";
     }
 
     public void createUser(final User body) {
@@ -70,7 +70,7 @@ public class UserCompositeIntegration {
 
     public User getUser(final Long userId) {
         try {
-            var url = userServiceUrl + userId;
+            var url = userServiceUrl + "/" + userId;
             log.debug("Will get a user from URL: {}", url);
 
             return restTemplate.getForObject(url, User.class);
@@ -82,7 +82,7 @@ public class UserCompositeIntegration {
 
     public Profile getProfile(final Long userId) {
         try {
-            var url = profileServiceUrl + userId;
+            var url = profileServiceUrl + "/" + userId;
             log.debug("Will get a profile from URL: {}", url);
 
             return restTemplate.getForObject(url, Profile.class);
@@ -94,14 +94,9 @@ public class UserCompositeIntegration {
 
     public void deleteUser(final Long userId) {
         try {
-            var userUrl = userServiceUrl + userId;
+            var userUrl = userServiceUrl + "?userId=" + userId;
             log.debug("Will delete a user from URL: {}", userUrl);
             restTemplate.delete(userUrl);
-
-            var profileUrl = profileServiceUrl + userId;
-            log.debug("Will delete a profile from URL: {}", profileUrl);
-            restTemplate.delete(profileUrl);
-
         } catch (HttpClientErrorException ex) {
             throw handleHttpClientException(ex);
         }
@@ -109,7 +104,7 @@ public class UserCompositeIntegration {
 
     public void deleteProfile(final Long userId) {
         try {
-            var profileUrl = profileServiceUrl + userId;
+            var profileUrl = profileServiceUrl + "?userId=" + userId;
             log.debug("Will call the deleteProfile API on URL: {}", profileUrl);
             restTemplate.delete(profileUrl);
 
