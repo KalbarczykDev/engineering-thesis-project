@@ -33,6 +33,7 @@ public class PersistenceTests extends MySqlTestBase {
 
         var entity = UserEntity.builder()
                 .username("username")
+                .slug("username")
                 .email("email@example.com")
                 .password("secret")
                 .build();
@@ -47,6 +48,7 @@ public class PersistenceTests extends MySqlTestBase {
     void shouldCreateUser() {
         var newEntity = UserEntity.builder()
                 .username("newuser")
+                .slug("newuser")
                 .email("email")
                 .password("newsecret")
                 .build();
@@ -86,7 +88,7 @@ public class PersistenceTests extends MySqlTestBase {
     @Test
     void shouldThrowDuplicateError() {
         assertThrows(DataIntegrityViolationException.class, () -> {
-            var entity = UserEntity.builder().username("username").email("email@example.com").password("password").build();
+            var entity = UserEntity.builder().username("username").slug("username").email("email@example.com").password("password").build();
             repository.save(entity);
         });
     }

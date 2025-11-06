@@ -1,14 +1,18 @@
 package dev.kalbarczyk.userservice.service;
 
+import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.core.user.UserService;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
+import dev.kalbarczyk.userservice.persistence.UserEntity;
 import dev.kalbarczyk.userservice.persistence.UserRepository;
+import dev.kalbarczyk.util.SlugUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -21,18 +25,26 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User createUser(final @Valid User body) {
+    public User createUser(final @Valid CreateUser body) {
         log.debug("createUser: tries to create a new entity for username: {}", body.username());
 
-        repository.findByEmail(body.email())
+        repository.findByEmailOrUsername(body.email(), body.username())
                 .ifPresent(u -> {
-                    throw new InvalidInputException("Email already in use: " + body.email());
+                    if (u.getEmail().equals(body.email()))
+                        throw new InvalidInputException("Email already in use: " + body.email());
+                    if (u.getUsername().equals(body.username()))
+                        throw new InvalidInputException("Username already in use: " + body.username());
                 });
 
+        var newEntity = UserEntity.builder()
+                .username(body.username())
+                .slug(SlugUtil.toSlug(body.username()))
+                .email(body.email())
+                .password(body.password())
+                .build();
 
-        var newEntity = mapper.apiToEntity(body);
         var savedEntity = repository.save(newEntity);
-        log.debug("createUser: entity created for userId: {}", body.userId());
+        log.debug("createUser: entity created for userId: {}", savedEntity.getId());
         return mapper.entityToApi(savedEntity);
     }
 
@@ -65,13 +77,17 @@ public class UserServiceImpl implements UserService {
         var entity = repository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("No user found for userId: " + userId));
 
-        repository.findByEmail(body.email())
+        repository.findByEmailOrUsername(body.email(), body.username())
                 .filter(u -> !u.getId().equals(userId))
                 .ifPresent(u -> {
-                    throw new InvalidInputException("Email already in use: " + body.email());
+                    if (u.getEmail().equals(body.email()))
+                        throw new InvalidInputException("Email already in use: " + body.email());
+                    if (u.getUsername().equals(body.username()))
+                        throw new InvalidInputException("Username already in use: " + body.username());
                 });
 
         entity.setUsername(body.username());
+        entity.setSlug(SlugUtil.toSlug(body.username()));
         entity.setEmail(body.email());
         entity.setPassword(body.password());
 

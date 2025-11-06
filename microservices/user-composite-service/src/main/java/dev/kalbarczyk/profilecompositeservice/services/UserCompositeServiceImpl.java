@@ -72,6 +72,7 @@ public class UserCompositeServiceImpl implements UserCompositeService {
         return new UserAggregate(
                 user.userId(),
                 user.username(),
+                user.slug(),
                 user.email(),
                 profile.displayName(),
                 profile.bio(),

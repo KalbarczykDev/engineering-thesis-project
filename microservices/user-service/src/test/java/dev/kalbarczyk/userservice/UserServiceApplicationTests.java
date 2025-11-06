@@ -32,7 +32,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
     void setupDb() {
         repository.deleteAll();
 
-        var user = UserEntity.builder().username("username").password("password").email("email").build();
+        var user = UserEntity.builder().username("username").slug("username").password("password").email("email").build();
         savedUser = repository.save(user);
     }
 
@@ -48,6 +48,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
                 .expectBody()
                 .jsonPath("$.userId").isEqualTo(userId)
                 .jsonPath("$.username").isEqualTo(savedUser.getUsername())
+                .jsonPath("$.slug").isEqualTo(savedUser.getSlug())
                 .jsonPath("$.email").isEqualTo(savedUser.getEmail())
                 .jsonPath("$.password").isEqualTo(savedUser.getPassword())
                 .jsonPath("$.createdAt").isEqualTo(savedUser.getCreatedAt())
@@ -70,7 +71,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
 
     @Test
     void shouldCreateUser() {
-        var newUser = new User(null, "newUsername", "newEmail@gmail.com", "newPassword", null, null);
+        var newUser = new User(null, "newUsername", "newusername", "newEmail@gmail.com", "newPassword", null, null);
         client.post()
                 .uri("/users")
                 .bodyValue(newUser)
@@ -81,6 +82,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
                 .expectBody()
                 .jsonPath("$.userId").isNumber()
                 .jsonPath("$.username").isEqualTo("newUsername")
+                .jsonPath("$.slug").isEqualTo("newusername")
                 .jsonPath("$.email").isEqualTo("newEmail@gmail.com")
                 .jsonPath("$.password").isEqualTo("newPassword")
                 .jsonPath("$.createdAt").isNotEmpty()
@@ -89,7 +91,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
 
     @Test
     void shouldThrowWhenCreatingInvalidUser() {
-        var newUser = new User(null, null, "mail.com", "n", null, null);
+        var newUser = new User(null, null, null, "mail.com", "n", null, null);
 
         client.post()
                 .uri("/users")
@@ -106,7 +108,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
     @Test
     void shouldUpdateUser() {
         var userId = savedUser.getId();
-        var updated = new User(userId, "updatedUsername", "updated@gmail.com", "updatedPassword", null, null);
+        var updated = new User(userId, "updatedUsername", "updatedUsername", "updated@gmail.com", "updatedPassword", null, null);
 
         client.put()
                 .uri("/users/" + userId)
@@ -118,6 +120,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
                 .expectBody()
                 .jsonPath("$.userId").isEqualTo(userId)
                 .jsonPath("$.username").isEqualTo("updatedUsername")
+                .jsonPath("$.slug").isEqualTo("updatedusername")
                 .jsonPath("$.email").isEqualTo("updated@gmail.com")
                 .jsonPath("$.password").isEqualTo("updatedPassword");
 
@@ -130,6 +133,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
     void shouldThrowWhenUpdatingNonExistingUser() {
         var userId = savedUser.getId() + 1;
         var updated = new User(userId,
+                "wrong",
                 "wrong",
                 "wrong@mail.com",
                 "pass",
@@ -150,7 +154,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
     @Test
     void shouldThrowWhenUpdatingUserWithInvalidData() {
         var userId = savedUser.getId();
-        var updated = new User(userId, null, "invalidEmail", "p", null, null);
+        var updated = new User(userId, null, null, "invalidEmail", "p", null, null);
 
         client.put()
                 .uri("/users/" + userId)

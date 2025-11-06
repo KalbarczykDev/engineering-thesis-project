@@ -3,6 +3,7 @@ package dev.kalbarczyk.api.core.composite.user;
 public record UserAggregate(
         Long userId,
         String username,
+        String slug,
         String email,
         String displayName,
         String bio,

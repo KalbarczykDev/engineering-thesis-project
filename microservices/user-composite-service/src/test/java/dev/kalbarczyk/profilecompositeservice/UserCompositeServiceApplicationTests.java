@@ -40,6 +40,7 @@ class UserCompositeServiceApplicationTests {
                         new User(
                                 USER_ID_OK,
                                 "username",
+                                "username",
                                 "email",
                                 "password",
                                 LocalDateTime.now().toString(),
@@ -65,7 +66,7 @@ class UserCompositeServiceApplicationTests {
 
         when(compositeIntegration.createUserAndProfile(any(User.class)))
                 .thenReturn(Pair.of(
-                        new User(1L, "username", "email", "password",
+                        new User(1L, "username","username" ,"email", "password",
                                 LocalDateTime.now().toString(),
                                 LocalDateTime.now().toString()),
                         new Profile(1L, "displayName", "bio", "location",
@@ -76,7 +77,8 @@ class UserCompositeServiceApplicationTests {
 
     @Test
     void shouldCreateUser() {
-        var user = new User(null, "username", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
+        var user = new User(null, "username",
+                "username", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
         client.post()
                 .uri("/user-composite")
                 .bodyValue(user)

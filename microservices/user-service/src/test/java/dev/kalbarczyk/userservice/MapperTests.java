@@ -18,31 +18,32 @@ public class MapperTests {
     void mapperTests() {
         assertNotNull(mapper);
 
-        var api = new User(1L, "name", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
+        var api = new User(1L, "name", "name", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
 
         var entity = mapper.apiToEntity(api);
 
         assertEquals(api.userId(), entity.getId());
         assertEquals(api.username(), entity.getUsername());
+        assertEquals(api.slug(), entity.getSlug());
         assertEquals(api.email(), entity.getEmail());
         assertEquals(api.password(), entity.getPassword());
-
 
 
         var result = mapper.entityToApi(entity);
 
         assertEquals(api.userId(), result.userId());
         assertEquals(api.username(), result.username());
+        assertEquals(api.slug(), result.slug());
         assertEquals(api.email(), result.email());
         assertEquals(api.password(), result.password());
 
     }
 
     @Test
-    void mapperListTests(){
+    void mapperListTests() {
         assertNotNull(mapper);
 
-        var api = new User(1L, "name", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
+        var api = new User(1L, "name", "name", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
 
         var apiList = Collections.singletonList(api);
 
@@ -53,6 +54,7 @@ public class MapperTests {
 
         assertEquals(api.userId(), entity.getId());
         assertEquals(api.username(), entity.getUsername());
+        assertEquals(api.slug(), entity.getSlug());
         assertEquals(api.email(), entity.getEmail());
         assertEquals(api.password(), entity.getPassword());
 
@@ -64,6 +66,7 @@ public class MapperTests {
 
         assertEquals(api.userId(), result.userId());
         assertEquals(api.username(), result.username());
+        assertEquals(api.slug(), result.slug());
         assertEquals(api.email(), result.email());
         assertEquals(api.password(), result.password());
 

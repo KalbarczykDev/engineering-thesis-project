@@ -16,7 +16,7 @@ public interface UserService {
             consumes = "application/json",
             produces = "application/json"
     )
-    User createUser(final @Valid @RequestBody User body);
+    User createUser(final @Valid @RequestBody CreateUser body);
 
     /**
      * Deletes the user with the given userId.
