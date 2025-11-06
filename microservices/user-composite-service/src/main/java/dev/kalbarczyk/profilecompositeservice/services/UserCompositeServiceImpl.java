@@ -1,6 +1,6 @@
 package dev.kalbarczyk.profilecompositeservice.services;
 
-import dev.kalbarczyk.api.core.composite.user.UserAggregate;
+import dev.kalbarczyk.api.core.composite.user.UserProfileComposite;
 import dev.kalbarczyk.api.core.composite.user.UserCompositeService;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.user.User;
@@ -19,7 +19,7 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     private final UserCompositeIntegration integration;
 
     @Override
-    public UserAggregate createUser(final User body) {
+    public UserProfileComposite createUser(final User body) {
         try {
             log.debug("createCompositeUser: creates a new composite entity for username: {}", body.username());
             var result = integration.createUserAndProfile(body);
@@ -39,7 +39,7 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     }
 
     @Override
-    public UserAggregate getUserProfile(final Long userId) {
+    public UserProfileComposite getUserProfile(final Long userId) {
 
         var user = integration.getUser(userId);
         if (user == null) {
@@ -66,10 +66,10 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     }
 
 
-    private UserAggregate createUserAggregate(
+    private UserProfileComposite createUserAggregate(
             final User user, final Profile profile
     ) {
-        return new UserAggregate(
+        return new UserProfileComposite(
                 user.userId(),
                 user.username(),
                 user.slug(),

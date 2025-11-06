@@ -15,7 +15,7 @@ public interface UserCompositeService {
             consumes = "application/json",
             produces = "application/json"
     )
-    UserAggregate createUser(final @RequestBody User body);
+    UserProfileComposite createUser(final @RequestBody User body);
 
     /**
      * Gets the user and profile information.
@@ -26,7 +26,7 @@ public interface UserCompositeService {
     @GetMapping(
             value = "/user-composite/{userId}/profile",
             produces = "application/json")
-    UserAggregate getUserProfile(final @PathVariable Long userId);
+    UserProfileComposite getUserProfile(final @PathVariable Long userId);
 
 
     /**
