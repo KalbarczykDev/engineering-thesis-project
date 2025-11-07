@@ -125,18 +125,7 @@ class UserCompositeServiceApplicationTests {
                 .jsonPath("$.location").isEqualTo("newLocation");
     }
 
-    @Test
-    void shouldThrowWhenUpdatingProfileOfNonExistingUser() {
-        client.put()
-                .uri("/user-composite/" + USER_ID_NOT_FOUND + "/profile")
-                .bodyValue(new UpdateProfile("newDisplayName", "newBio", "newLocation"))
-                .accept(APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isNotFound()
-                .expectBody()
-                .jsonPath("$.path").isEqualTo("/user-composite/" + USER_ID_NOT_FOUND + "/profile")
-                .jsonPath("$.message").isEqualTo("No profile found for userId: " + USER_ID_NOT_FOUND);
-    }
+
 
     @Test
     void getUserProfile() {

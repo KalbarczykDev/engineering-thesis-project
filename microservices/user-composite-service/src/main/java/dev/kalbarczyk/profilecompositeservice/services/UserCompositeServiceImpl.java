@@ -60,12 +60,6 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     @Override
     public Profile updateProfile(final Long userId, final UpdateProfile body) {
         log.debug("updateCompositeUser: updates profile entity for userId: {}", userId);
-
-        var profile = integration.getProfile(userId);
-        if (profile == null) {
-            throw new NotFoundException("No profile found for userId: " + userId);
-        }
-
         var updatedProfile = integration.updateProfile(userId, body);
         log.debug("updateCompositeUser: updated profile entity for userId: {}", userId);
         return updatedProfile;
