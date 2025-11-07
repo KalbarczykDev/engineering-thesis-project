@@ -16,15 +16,6 @@ services:
       mongodb:
         condition: service_healthy
 
-  workout:
-    build: microservices/workout-service
-    mem_limit: 512m
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      mongodb:
-        condition: service_healthy
-
   user-composite:
     build: microservices/user-composite-service
     mem_limit: 512m
