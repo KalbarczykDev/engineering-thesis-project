@@ -2,6 +2,7 @@ package dev.kalbarczyk.profilecompositeservice.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.kalbarczyk.api.core.profile.Profile;
+import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;

@@ -3,6 +3,7 @@ package dev.kalbarczyk.profilecompositeservice.services;
 import dev.kalbarczyk.api.core.composite.user.UserProfileComposite;
 import dev.kalbarczyk.api.core.composite.user.UserCompositeService;
 import dev.kalbarczyk.api.core.profile.Profile;
+import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
@@ -53,6 +54,14 @@ public class UserCompositeServiceImpl implements UserCompositeService {
         }
 
         return createUserAggregate(user, profile);
+    }
+
+    @Override
+    public Profile updateProfile(final Long userId, final UpdateProfile body) {
+        log.debug("updateCompositeUser: updates profile entity for userId: {}", userId);
+
+        log.debug("updateCompositeUser: updated profile entity for userId: {}", userId);
+        return null;
     }
 
     @Override
