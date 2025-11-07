@@ -1,0 +1,31 @@
+server.port: 7001
+
+app:
+  exercise-service:
+    host: localhost
+    port: 70010
+  workout-service:
+    host: localhost
+    port: 70011
+
+
+server.error.include-message: always
+logging:
+  level:
+    root: INFO
+    dev.kalbarczyk: DEBUG
+
+---
+spring.config.activate.on-profile: docker
+
+server.port: 8080
+
+app:
+  exercise-service:
+    host: exercise
+    port: 8080
+  workout-service:
+    host: workout
+    port: 8080
+
+

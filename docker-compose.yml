@@ -26,6 +26,32 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
 
+  workout:
+    build: microservices/workout-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  exercise:
+    build: microservices/exercise-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  workout-composite:
+    build: microservices/workout-composite-service
+    mem_limit: 512m
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
   mongodb:
     image: mongo:8.0.5
     mem_limit: 512m
@@ -34,7 +60,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: pwd
-      MONGO_INITDB_DATABASE: profile-db
+      MONGO_INITDB_DATABASE: mongo-db
     command: mongod --quiet --logpath /dev/null
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh --quiet
