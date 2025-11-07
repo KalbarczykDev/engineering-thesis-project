@@ -7,10 +7,17 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-
-
   profile:
     build: microservices/profile-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  workout:
+    build: microservices/workout-service
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
