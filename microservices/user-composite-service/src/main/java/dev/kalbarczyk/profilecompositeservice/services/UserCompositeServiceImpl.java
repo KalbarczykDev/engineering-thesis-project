@@ -71,6 +71,7 @@ public class UserCompositeServiceImpl implements UserCompositeService {
 
         integration.deleteUser(userId);
         integration.deleteProfile(userId);
+        //TODO: Workout deletion when workout microservice is ready
 
         log.debug("deleteCompositeUser: composite entities deleted for userId: {}", userId);
     }
