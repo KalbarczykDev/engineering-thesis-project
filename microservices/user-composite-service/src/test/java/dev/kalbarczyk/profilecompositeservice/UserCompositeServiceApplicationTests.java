@@ -68,14 +68,14 @@ class UserCompositeServiceApplicationTests {
                 .thenThrow(new InvalidInputException("INVALID: " + USER_ID_INVALID));
 
         when(compositeIntegration.updateProfile(eq(USER_ID_OK), any(UpdateProfile.class)))
-        .thenReturn(new Profile(
-                USER_ID_OK,
-                "newDisplayName",
-                "newBio",
-                "newLocation",
-                LocalDateTime.now().toString(),
-                LocalDateTime.now().toString()
-        ));
+                .thenReturn(new Profile(
+                        USER_ID_OK,
+                        "newDisplayName",
+                        "newBio",
+                        "newLocation",
+                        LocalDateTime.now().toString(),
+                        LocalDateTime.now().toString()
+                ));
 
         when(compositeIntegration.createUserAndProfile(any(CreateUser.class)))
                 .thenReturn(Pair.of(
@@ -123,6 +123,19 @@ class UserCompositeServiceApplicationTests {
                 .jsonPath("$.displayName").isEqualTo("newDisplayName")
                 .jsonPath("$.bio").isEqualTo("newBio")
                 .jsonPath("$.location").isEqualTo("newLocation");
+    }
+
+    @Test
+    void shouldThrowWhenUpdatingProfileOfNonExistingUser() {
+        client.put()
+                .uri("/user-composite/" + USER_ID_NOT_FOUND + "/profile")
+                .bodyValue(new UpdateProfile("newDisplayName", "newBio", "newLocation"))
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("$.path").isEqualTo("/user-composite/" + USER_ID_NOT_FOUND + "/profile")
+                .jsonPath("$.message").isEqualTo("No profile found for userId: " + USER_ID_NOT_FOUND);
     }
 
     @Test
