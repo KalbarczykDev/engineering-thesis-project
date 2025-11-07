@@ -4,6 +4,7 @@ import dev.kalbarczyk.api.core.composite.user.UserProfileComposite;
 import dev.kalbarczyk.api.core.composite.user.UserCompositeService;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.UpdateProfile;
+import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
@@ -20,7 +21,7 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     private final UserCompositeIntegration integration;
 
     @Override
-    public UserProfileComposite createUser(final User body) {
+    public UserProfileComposite createUser(final CreateUser body) {
         try {
             log.debug("createCompositeUser: creates a new composite entity for username: {}", body.username());
             var result = integration.createUserAndProfile(body);
@@ -60,8 +61,14 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     public Profile updateProfile(final Long userId, final UpdateProfile body) {
         log.debug("updateCompositeUser: updates profile entity for userId: {}", userId);
 
+        var profile = integration.getProfile(userId);
+        if (profile == null) {
+            throw new NotFoundException("No profile found for userId: " + userId);
+        }
+
+        var updatedProfile = integration.updateProfile(userId, body);
         log.debug("updateCompositeUser: updated profile entity for userId: {}", userId);
-        return null;
+        return updatedProfile;
     }
 
     @Override

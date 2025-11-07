@@ -3,6 +3,7 @@ package dev.kalbarczyk.profilecompositeservice.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.UpdateProfile;
+import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
@@ -41,7 +42,7 @@ public class UserCompositeIntegration {
         this.userServiceUrl = "http://" + userServiceHost + ":" + userServicePort + "/users";
     }
 
-    public Pair<User,Profile> createUserAndProfile(final User body) {
+    public Pair<User, Profile> createUserAndProfile(final CreateUser body) {
         try {
             log.debug("Will post a new user to URL: {}", userServiceUrl);
 
@@ -88,6 +89,10 @@ public class UserCompositeIntegration {
         } catch (HttpClientErrorException ex) {
             throw handleHttpClientException(ex);
         }
+    }
+
+    public Profile updateProfile(final Long userId, final UpdateProfile body) {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     public void deleteUser(final Long userId) {

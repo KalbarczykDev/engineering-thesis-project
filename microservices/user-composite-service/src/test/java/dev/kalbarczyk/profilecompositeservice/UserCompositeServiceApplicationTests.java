@@ -1,12 +1,15 @@
 package dev.kalbarczyk.profilecompositeservice;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import dev.kalbarczyk.api.core.profile.Profile;
+import dev.kalbarczyk.api.core.profile.UpdateProfile;
+import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
@@ -64,9 +67,19 @@ class UserCompositeServiceApplicationTests {
         when(compositeIntegration.getUser(USER_ID_INVALID))
                 .thenThrow(new InvalidInputException("INVALID: " + USER_ID_INVALID));
 
-        when(compositeIntegration.createUserAndProfile(any(User.class)))
+        when(compositeIntegration.updateProfile(eq(USER_ID_OK), any(UpdateProfile.class)))
+        .thenReturn(new Profile(
+                USER_ID_OK,
+                "newDisplayName",
+                "newBio",
+                "newLocation",
+                LocalDateTime.now().toString(),
+                LocalDateTime.now().toString()
+        ));
+
+        when(compositeIntegration.createUserAndProfile(any(CreateUser.class)))
                 .thenReturn(Pair.of(
-                        new User(1L, "username","username" ,"email", "password",
+                        new User(1L, "username", "username", "email", "password",
                                 LocalDateTime.now().toString(),
                                 LocalDateTime.now().toString()),
                         new Profile(1L, "displayName", "bio", "location",
@@ -77,8 +90,7 @@ class UserCompositeServiceApplicationTests {
 
     @Test
     void shouldCreateUser() {
-        var user = new User(null, "username",
-                "username", "email", "password", LocalDateTime.now().toString(), LocalDateTime.now().toString());
+        var user = new CreateUser("username", "email", "password");
         client.post()
                 .uri("/user-composite")
                 .bodyValue(user)
@@ -86,6 +98,7 @@ class UserCompositeServiceApplicationTests {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody();
+
     }
 
     @Test
@@ -99,7 +112,21 @@ class UserCompositeServiceApplicationTests {
     }
 
     @Test
-    void getUserById() {
+    void shouldUpdateUserProfile() {
+        client.put()
+                .uri("/user-composite/" + USER_ID_OK + "/profile")
+                .bodyValue(new UpdateProfile("newDisplayName", "newBio", "newLocation"))
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.displayName").isEqualTo("newDisplayName")
+                .jsonPath("$.bio").isEqualTo("newBio")
+                .jsonPath("$.location").isEqualTo("newLocation");
+    }
+
+    @Test
+    void getUserProfile() {
         client.get().uri("/user-composite/" + USER_ID_OK + "/profile")
                 .accept(APPLICATION_JSON)
                 .exchange()

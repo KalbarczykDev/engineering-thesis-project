@@ -2,6 +2,7 @@ package dev.kalbarczyk.api.core.composite.user;
 
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.UpdateProfile;
+import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public interface UserCompositeService {
             consumes = "application/json",
             produces = "application/json"
     )
-    UserProfileComposite createUser(final @RequestBody User body);
+    UserProfileComposite createUser(final @RequestBody CreateUser body);
 
     /**
      * Gets the user and profile information.
