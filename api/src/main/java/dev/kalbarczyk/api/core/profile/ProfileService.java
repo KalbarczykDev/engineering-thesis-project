@@ -52,6 +52,6 @@ public interface ProfileService {
             consumes = "application/json",
             produces = "application/json"
     )
-    Profile updateProfile(final @PathVariable Long userId, @Valid @RequestBody Profile profile);
+    Profile updateProfile(final @PathVariable Long userId, @Valid @RequestBody UpdateProfile profile);
 
 }

@@ -4,6 +4,7 @@ import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.ProfileService;
+import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 import dev.kalbarczyk.profileservice.persistence.ProfileRepository;
@@ -64,7 +65,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Profile updateProfile(final Long userId, final Profile profile) {
+    public Profile updateProfile(final Long userId, final UpdateProfile profile) {
         log.debug("updateProfile: tries to get an entity with userId: {}", userId);
 
         var entity = repository.findById(userId).orElseThrow(

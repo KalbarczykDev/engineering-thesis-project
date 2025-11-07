@@ -9,6 +9,8 @@ import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -91,9 +93,19 @@ public class UserCompositeIntegration {
         }
     }
 
+
     public Profile updateProfile(final Long userId, final UpdateProfile body) {
-        throw new UnsupportedOperationException("Not implemented yet");
+        try {
+            var url = profileServiceUrl + "/" + userId;
+            log.debug("Will update a profile on URL: {}", url);
+            var request = new HttpEntity<>(body);
+            var response = restTemplate.exchange(url, HttpMethod.PUT, request, Profile.class);
+            return response.getBody();
+        } catch (HttpClientErrorException ex) {
+            throw handleHttpClientException(ex);
+        }
     }
+
 
     public void deleteUser(final Long userId) {
         try {
@@ -122,7 +134,7 @@ public class UserCompositeIntegration {
             case NOT_FOUND:
                 return new NotFoundException(getErrorMessage(ex));
 
-            case UNPROCESSABLE_ENTITY:
+            case UNPROCESSABLE_ENTITY, BAD_REQUEST:
                 return new InvalidInputException(getErrorMessage(ex));
             case null:
             default:
