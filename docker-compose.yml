@@ -31,6 +31,8 @@ services:
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8081:8080"
     depends_on:
       mongodb:
         condition: service_healthy
@@ -40,17 +42,11 @@ services:
     mem_limit: 512m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8082:8080"
     depends_on:
       mongodb:
         condition: service_healthy
-
-  workout-composite:
-    build: microservices/workout-composite-service
-    mem_limit: 512m
-    ports:
-      - "8081:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
 
   mongodb:
     image: mongo:8.0.5

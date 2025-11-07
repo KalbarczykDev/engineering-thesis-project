@@ -7,7 +7,6 @@ pluginManagement {
 include ':api'
 include ':util'
 
-include(':microservices:workout-composite-service')
 include ':microservices:user-composite-service'
 include ':microservices:user-service'
 include ':microservices:profile-service'
