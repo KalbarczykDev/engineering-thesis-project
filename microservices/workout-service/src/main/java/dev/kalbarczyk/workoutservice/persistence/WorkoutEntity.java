@@ -2,6 +2,7 @@ package dev.kalbarczyk.workoutservice.persistence;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -15,10 +16,13 @@ import java.util.List;
 @AllArgsConstructor
 public class WorkoutEntity {
     @Id
-    private String id;
+    private Long id;
+    @Version
+    private Long version;
     private Long userId;
     private String name;
     private LocalDateTime date;
+    @Singular
     private List<WorkoutExercise> exercises;
 
 
@@ -29,6 +33,7 @@ public class WorkoutEntity {
     @AllArgsConstructor
     public static class WorkoutExercise {
         private Exercise exercise;
+        @Singular("series")
         private List<Series> series;
     }
 
