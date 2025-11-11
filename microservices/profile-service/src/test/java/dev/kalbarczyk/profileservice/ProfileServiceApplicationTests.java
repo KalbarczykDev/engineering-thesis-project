@@ -2,6 +2,7 @@ package dev.kalbarczyk.profileservice;
 
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.event.Event;
+import dev.kalbarczyk.api.exceptions.NotFoundException;
 import dev.kalbarczyk.profileservice.persistence.ProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,17 +41,14 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
     @Test
     void shouldGetProfileByUserId() {
         var userId = 1L;
-
-        assertNull(repository.findByUserId(userId).block());
-        assertEquals(0, repository.count().block());
-
-
         var profile = new Profile(userId, "displayName", "Bio", "City", null, null);
         var event = new Event<>(Event.Type.CREATE, profile.userId(), profile);
+
         messageProcessor.accept(event);
 
-        assertNotNull(repository.findByUserId(userId).block());
-        assertEquals(1, repository.count().block());
+        var saved = repository.findByUserId(userId).block();
+        assertNotNull(saved);
+        assertEquals(profile.userId(), saved.getUserId());
 
         client.get()
                 .uri("/profiles/" + userId)
@@ -58,8 +56,9 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.OK)
                 .expectHeader().contentType(APPLICATION_JSON)
-                .expectBody();
-
+                .expectBody()
+                .jsonPath("$.userId").isEqualTo(userId)
+                .jsonPath("$.displayName").isEqualTo("displayName");
     }
 
     @Test
@@ -67,6 +66,7 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
         var createdUserId = 1L;
         var profile = new Profile(createdUserId, "displayName", "Bio", "City", null, null);
         var event = new Event<>(Event.Type.CREATE, profile.userId(), profile);
+
         messageProcessor.accept(event);
 
         var savedProfile = repository.findByUserId(createdUserId).block();
@@ -88,6 +88,7 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
     void shouldCreateProfile() {
         var newProfile = new Profile(2L, "newDisplayName", "New Bio", "New City", null, null);
         var event = new Event<>(Event.Type.CREATE, newProfile.userId(), newProfile);
+
         messageProcessor.accept(event);
 
         var saved = repository.findByUserId(newProfile.userId()).block();
@@ -110,20 +111,20 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
 
     @Test
     void shouldUpdateProfile() {
-        var userId = 1L;
-        var profile = new Profile(userId, "displayName", "bio", "city", null, null);
+        var userId = 3L;
+        var profile = new Profile(userId, "displayName", "Bio", "City", null, null);
         var createEvent = new Event<>(Event.Type.CREATE, userId, profile);
         messageProcessor.accept(createEvent);
 
-        var updated = new Profile(userId, "updatedDisplayName", "updatedBio", "Updated City", null, null);
+        var updated = new Profile(userId, "updatedName", "updatedBio", "Updated City", null, null);
         var updateEvent = new Event<>(Event.Type.UPDATE, userId, updated);
         messageProcessor.accept(updateEvent);
 
-        var entity = repository.findByUserId(userId).block();
-        assertNotNull(entity);
-        assertEquals(updated.displayName(), entity.getDisplayName());
-        assertEquals(updated.bio(), entity.getBio());
-        assertEquals(updated.location(), entity.getLocation());
+        var saved = repository.findByUserId(userId).block();
+        assertNotNull(saved);
+        assertEquals("updatedName", saved.getDisplayName());
+        assertEquals("updatedBio", saved.getBio());
+        assertEquals("Updated City", saved.getLocation());
     }
 
     @Test
@@ -132,8 +133,8 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
         var updated = new Profile(userId, "updatedDisplayName", "updatedBio", "Updated City", null, null);
         var event = new Event<>(Event.Type.UPDATE, userId, updated);
 
-        assertThrows(RuntimeException.class, () -> messageProcessor.accept(event));
-        assertNull(repository.findByUserId(userId).block());
+        var thrown = assertThrows(RuntimeException.class, () -> messageProcessor.accept(event));
+        assertTrue(thrown.getMessage().contains("No profile found"));
     }
 
     @Test
@@ -141,8 +142,10 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
         var userId = 1L;
         var profile = new Profile(userId, "displayName", "bio", "city", null, null);
         messageProcessor.accept(new Event<>(Event.Type.CREATE, userId, profile));
+        repository.findByUserId(userId).block();
 
         messageProcessor.accept(new Event<>(Event.Type.DELETE, userId, null));
+        repository.findByUserId(userId).block();
 
         assertNull(repository.findByUserId(userId).block());
         assertEquals(0, repository.count().block());

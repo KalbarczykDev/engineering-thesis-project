@@ -70,7 +70,7 @@ services:
     mem_limit: 512m
     ports:
       - "5672:5672"
-      - "15672:15672"
+      - "15672:15672" # Management UI
     healthcheck:
       test: [ "CMD", "rabbitmqctl", "status" ]
       interval: 5s
