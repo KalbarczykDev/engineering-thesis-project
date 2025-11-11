@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+import static java.lang.String.format;
+
 @Document(collection = "profiles")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,5 +42,10 @@ public class ProfileEntity {
     @LastModifiedDate
     @EqualsAndHashCode.Exclude
     private LocalDateTime updatedAt;
+
+    @Override
+    public String toString() {
+        return format("ProfileEntity: %s", userId);
+    }
 
 }
