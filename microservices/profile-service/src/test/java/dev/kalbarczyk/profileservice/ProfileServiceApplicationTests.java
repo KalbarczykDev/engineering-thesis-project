@@ -1,18 +1,37 @@
 package dev.kalbarczyk.profileservice;
 
 import dev.kalbarczyk.api.core.profile.Profile;
+import dev.kalbarczyk.api.event.Event;
 import dev.kalbarczyk.profileservice.persistence.ProfileEntity;
 import dev.kalbarczyk.profileservice.persistence.ProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+
+
+import java.util.function.Consumer;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+
+import java.util.function.Consumer;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class ProfileServiceApplicationTests extends MongoDbTestBase {
@@ -23,40 +42,40 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
     @Autowired
     private ProfileRepository repository;
 
-    private ProfileEntity savedProfile;
+    @Autowired
+    @Qualifier("messageProcessor")
+    private Consumer<Event<Long, Profile>> messageProcessor;
 
 
-//    @BeforeEach
-//    void setupDb() {
-//        repository.deleteAll();
-//
-//
-//        var profile = ProfileEntity.builder()
-//                .userId(1L)
-//                .displayName("test")
-//                .bio("Test Bio")
-//                .location("Test City")
-//                .build();
-//
-//        savedProfile = repository.save(profile);
-//    }
-//
-//    @Test
-//    void shouldGetProfileByUserId() {
-//        var userId = savedProfile.getUserId();
-//        client.get()
-//                .uri("/profiles/" + userId)
-//                .accept(APPLICATION_JSON)
-//                .exchange()
-//                .expectStatus().isEqualTo(HttpStatus.OK)
-//                .expectHeader().contentType(APPLICATION_JSON)
-//                .expectBody()
-//                .jsonPath("$.userId").isEqualTo(userId)
-//                .jsonPath("$.displayName").isEqualTo(savedProfile.getDisplayName())
-//                .jsonPath("$.bio").isEqualTo(savedProfile.getBio())
-//                .jsonPath("$.location").isEqualTo(savedProfile.getLocation());
-//
-//    }
+    @BeforeEach
+    void setupDb() {
+        repository.deleteAll().block();
+    }
+
+    @Test
+    void shouldGetProfileByUserId() {
+        var userId = 1L;
+
+        assertNull(repository.findByUserId(userId).block());
+        assertEquals(0, repository.count().block());
+
+
+        var profile = new Profile(userId, "displayName", "Bio", "City", null, null);
+        var event = new Event<>(Event.Type.CREATE, profile.userId(),profile);
+        messageProcessor.accept(event);
+
+        assertNotNull(repository.findByUserId(userId).block());
+        assertEquals(1, repository.count().block());
+
+        client.get()
+                .uri("/profiles/" + userId)
+                .accept(APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.OK)
+                .expectHeader().contentType(APPLICATION_JSON)
+                .expectBody();
+
+    }
 //
 //    @Test
 //    void shouldThrowWhenProfileNotFound() {
@@ -170,6 +189,8 @@ class ProfileServiceApplicationTests extends MongoDbTestBase {
 //
 //        assertTrue(repository.findById(userId).isEmpty());
 //    }
+
+
 
 
 }
