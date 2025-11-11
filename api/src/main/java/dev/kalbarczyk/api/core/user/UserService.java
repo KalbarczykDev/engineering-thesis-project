@@ -2,6 +2,7 @@ package dev.kalbarczyk.api.core.user;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 public interface UserService {
 
@@ -16,7 +17,7 @@ public interface UserService {
             consumes = "application/json",
             produces = "application/json"
     )
-    User createUser(final @Valid @RequestBody CreateUser body);
+    Mono<User> createUser(final @Valid @RequestBody CreateUser body);
 
     /**
      * Deletes the user with the given userId.
@@ -24,7 +25,7 @@ public interface UserService {
      * @param userId ID of the user to delete
      */
     @DeleteMapping(value = "/users")
-    void deleteUser(final @RequestParam Long userId);
+    Mono<Void> deleteUser(final @RequestParam Long userId);
 
     /**
      * Gets the user with the given userId.
@@ -36,7 +37,7 @@ public interface UserService {
             value = "/users/{userId}",
             produces = "application/json"
     )
-    User getUser(final @PathVariable Long userId);
+    Mono<User> getUser(final @PathVariable Long userId);
 
 
     /**
@@ -51,5 +52,5 @@ public interface UserService {
             consumes = "application/json",
             produces = "application/json"
     )
-    User updateUser(final @PathVariable Long userId, final @Valid @RequestBody User body);
+    Mono<User> updateUser(final @PathVariable Long userId, final @Valid @RequestBody User body);
 }

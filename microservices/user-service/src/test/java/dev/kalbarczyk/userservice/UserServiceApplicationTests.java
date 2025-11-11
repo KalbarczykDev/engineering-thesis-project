@@ -6,17 +6,23 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import dev.kalbarczyk.api.core.user.User;
+import dev.kalbarczyk.api.event.Event;
 import dev.kalbarczyk.userservice.persistence.UserEntity;
 import dev.kalbarczyk.userservice.persistence.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.util.function.Consumer;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = {
+        "spring.cloud.stream.defaultBinder=rabbit",
+        "logging.level.se.magnus=DEBUG"})
 class UserServiceApplicationTests extends MySqlTestBase {
 
     @Autowired
@@ -25,15 +31,14 @@ class UserServiceApplicationTests extends MySqlTestBase {
     @Autowired
     private UserRepository repository;
 
-    private UserEntity savedUser;
 
+    @Autowired
+    @Qualifier("messageProcessor")
+    private Consumer<Event<Long, User>> messageProcessor;
 
     @BeforeEach
     void setupDb() {
         repository.deleteAll();
-
-        var user = UserEntity.builder().username("username").slug("username").password("password").email("email").build();
-        savedUser = repository.save(user);
     }
 
     @Test
