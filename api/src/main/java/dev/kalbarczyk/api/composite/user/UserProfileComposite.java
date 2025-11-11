@@ -1,4 +1,4 @@
-package dev.kalbarczyk.api.core.composite.user;
+package dev.kalbarczyk.api.composite.user;
 
 public record UserProfileComposite(
         Long userId,

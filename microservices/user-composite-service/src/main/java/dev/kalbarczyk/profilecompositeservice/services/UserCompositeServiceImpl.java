@@ -1,7 +1,7 @@
 package dev.kalbarczyk.profilecompositeservice.services;
 
-import dev.kalbarczyk.api.core.composite.user.UserProfileComposite;
-import dev.kalbarczyk.api.core.composite.user.UserCompositeService;
+import dev.kalbarczyk.api.composite.user.UserProfileComposite;
+import dev.kalbarczyk.api.composite.user.UserCompositeService;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.core.user.CreateUser;
