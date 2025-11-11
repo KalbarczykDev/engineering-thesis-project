@@ -1,6 +1,6 @@
-package dev.kalbarczyk.profilecompositeservice.config;
+package dev.kalbarczyk.usercompositeservice.config;
 
-import dev.kalbarczyk.profilecompositeservice.services.UserCompositeIntegration;
+import dev.kalbarczyk.usercompositeservice.services.UserCompositeIntegration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.health.CompositeReactiveHealthContributor;
 import org.springframework.boot.actuate.health.ReactiveHealthContributor;

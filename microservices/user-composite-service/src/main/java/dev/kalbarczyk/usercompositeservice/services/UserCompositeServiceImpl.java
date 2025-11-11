@@ -1,4 +1,4 @@
-package dev.kalbarczyk.profilecompositeservice.services;
+package dev.kalbarczyk.usercompositeservice.services;
 
 import dev.kalbarczyk.api.composite.user.UserProfileComposite;
 import dev.kalbarczyk.api.composite.user.UserCompositeService;

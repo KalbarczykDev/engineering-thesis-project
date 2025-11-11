@@ -1,4 +1,4 @@
-package dev.kalbarczyk.profilecompositeservice.services;
+package dev.kalbarczyk.usercompositeservice.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.kalbarczyk.api.core.profile.Profile;
