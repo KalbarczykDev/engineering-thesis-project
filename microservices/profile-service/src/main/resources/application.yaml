@@ -17,8 +17,8 @@ spring.cloud.stream:
   defaultBinder: rabbit
   default.contentType: application/json
   bindings.messageProcessor-in-0:
-    destination: userTopic
-    group: usersGroup
+    destination: profiles
+    group: profilesGroup
 
 spring.cloud.stream.bindings.messageProcessor-in-0.consumer:
   maxAttempts: 3
