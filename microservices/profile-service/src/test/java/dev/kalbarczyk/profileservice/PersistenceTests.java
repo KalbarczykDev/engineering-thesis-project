@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import reactor.test.StepVerifier;
 
 import java.util.Objects;
@@ -62,57 +64,65 @@ public class PersistenceTests extends MongoDbTestBase {
         StepVerifier.create(repository.count()).expectNext(2L).verifyComplete();
     }
 
-//    @Test
-//    void shouldUpdateProfile() {
-//        savedEntity.setDisplayName("Updated");
-//        repository.save(savedEntity);
-//        var foundEntity = repository.findById(savedEntity.getUserId()).orElseThrow();
-//        assertEquals(1, (long) foundEntity.getVersion());
-//        assertEquals("Updated", foundEntity.getDisplayName());
-//    }
-//
-//    @Test
-//    void shouldDeleteProfile() {
-//        repository.delete(savedEntity);
-//        assertFalse(repository.existsById(savedEntity.getUserId()));
-//    }
-//
-//    @Test
-//    void shouldGetByUserId() {
-//        var foundEntity = repository.findById(savedEntity.getUserId()).orElseThrow();
-//        assertEqualsProfile(savedEntity, foundEntity);
-//    }
-//
-//    @Test
-//    void shouldThrowDuplicateError() {
-//        assertThrows(Exception.class, () -> {
-//            var entity = ProfileEntity.builder()
-//                    .userId(1L)
-//                    .displayName("test")
-//                    .location("Test City")
-//                    .bio("This is a test profile.")
-//                    .build();
-//            repository.save(entity);
-//        });
-//    }
-//
-//    @Test
-//    void shouldThrowOptimisticLockError() {
-//        var entity1 = repository.findById(savedEntity.getUserId()).orElseThrow();
-//        var entity2 = repository.findById(savedEntity.getUserId()).orElseThrow();
-//
-//        entity1.setDisplayName("First Update");
-//        repository.save(entity1);
-//
-//        assertThrows(Exception.class, () -> {
-//            entity2.setDisplayName("Second Update");
-//            repository.save(entity2);
-//        });
-//
-//        var updatedEntity = repository.findById(savedEntity.getUserId()).orElseThrow();
-//        assertEquals(1, (long) updatedEntity.getVersion());
-//        assertEquals("First Update", updatedEntity.getDisplayName());
-//    }
+    @Test
+    void shouldUpdateProfile() {
+        savedEntity.setDisplayName("Updated");
+
+        StepVerifier.create(repository.save(savedEntity))
+                .expectNextMatches(updatedEntity ->
+                        updatedEntity.getVersion() == 1 &&
+                                "Updated".equals(updatedEntity.getDisplayName()))
+                .verifyComplete();
+
+        StepVerifier.create(repository.findById(savedEntity.getUserId()))
+                .expectNextMatches(foundEntity ->
+                        foundEntity.getVersion() == 1 &&
+                                "Updated".equals(foundEntity.getDisplayName()))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldDeleteProfile() {
+        StepVerifier.create(repository.delete(savedEntity)).verifyComplete();
+        StepVerifier.create(repository.existsById(savedEntity.getUserId())).expectNext(false).verifyComplete();
+    }
+
+    @Test
+    void shouldGetByUserId() {
+        StepVerifier.create(repository.findByUserId(savedEntity.getUserId()))
+                .expectNextMatches(foundEntity -> savedEntity.equals(foundEntity))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldThrowDuplicateError() {
+        var entity = ProfileEntity.builder()
+                .userId(1L)
+                .displayName("test")
+                .location("Test City")
+                .bio("This is a test profile.")
+                .build();
+        StepVerifier.create(repository.save(entity)).expectError(DuplicateKeyException.class).verify();
+    }
+
+    @Test
+    void shouldThrowOptimisticLockError() {
+        var entity1 = repository.findById(savedEntity.getUserId()).block();
+        var entity2 = repository.findById(savedEntity.getUserId()).block();
+
+        assertNotNull(entity1);
+        entity1.setDisplayName("First Update");
+        repository.save(entity1).block();
+
+        assertNotNull(entity2);
+        StepVerifier.create(repository.save(entity2)).expectError(OptimisticLockingFailureException.class).verify();
+
+        StepVerifier.create(repository.findById(savedEntity.getUserId()))
+                .expectNextMatches(foundEntity ->
+                        foundEntity.getVersion() == 1
+                                && foundEntity.getDisplayName().equals("First Update"))
+                .verifyComplete();
+    }
 
 
 }
