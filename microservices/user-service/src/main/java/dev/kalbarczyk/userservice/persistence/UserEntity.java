@@ -43,6 +43,10 @@ public class UserEntity {
     @Setter(AccessLevel.NONE)
     private LocalDateTime updatedAt;
 
+    @Override
+    public String toString() {
+        return String.format("UserEntity: %d", id);
+    }
 
     @PrePersist
     protected void onCreate() {
