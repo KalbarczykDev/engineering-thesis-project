@@ -16,12 +16,14 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
 public class ProfileEntity {
 
     @Id
     private Long userId;
 
     @Version
+    @EqualsAndHashCode.Exclude
     private Long version;
 
     private String displayName;
@@ -32,9 +34,11 @@ public class ProfileEntity {
     private String location;
 
     @CreatedDate
+    @EqualsAndHashCode.Exclude
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @EqualsAndHashCode.Exclude
     private LocalDateTime updatedAt;
 
 }

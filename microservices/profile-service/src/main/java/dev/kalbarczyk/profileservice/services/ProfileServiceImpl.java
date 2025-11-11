@@ -1,7 +1,5 @@
 package dev.kalbarczyk.profileservice.services;
 
-import com.mongodb.client.gridfs.GridFSBucket;
-import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.ProfileService;
 import dev.kalbarczyk.api.core.profile.UpdateProfile;
