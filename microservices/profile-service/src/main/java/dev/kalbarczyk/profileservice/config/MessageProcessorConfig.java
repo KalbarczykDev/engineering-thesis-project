@@ -4,6 +4,7 @@ import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.ProfileService;
 import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.event.Event;
+import dev.kalbarczyk.api.exceptions.EventProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +42,11 @@ public class MessageProcessorConfig {
                     var updateProfile = new UpdateProfile(profile.displayName(), profile.bio(), profile.location());
                     log.info("Update profile with ID: {}", profile.userId());
                     profileService.updateProfile(profile.userId(), updateProfile).block();
+                }
+                default -> {
+                    var errorMessage = "Incorrect event type: " + event.getEventType() + ", expected a CREATE, UPDATE or DELETE event";
+                    log.warn(errorMessage);
+                    throw new EventProcessingException(errorMessage);
                 }
 
             }
