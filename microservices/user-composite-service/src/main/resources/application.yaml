@@ -13,16 +13,12 @@ spring.cloud.stream:
   defaultBinder: rabbit
   default.contentType: application/json
   bindings:
-    products-out-0:
-      destination: products
+    users-out-0:
+      destination: users
       producer:
         required-groups: auditGroup
-    recommendations-out-0:
-      destination: recommendations
-      producer:
-        required-groups: auditGroup
-    reviews-out-0:
-      destination: reviews
+    profiles-out-0:
+      destination: profiles
       producer:
         required-groups: auditGroup
 
@@ -58,10 +54,9 @@ app:
     host: profile
     port: 8080
 
-
 spring.rabbitmq.host: rabbitmq
 
-spring.cloud.stream.kafka.binder.brokers: kafka
+pring.cloud.stream.kafka.binder.brokers: kafka
 
 ---
 spring.config.activate.on-profile: streaming_partitioned

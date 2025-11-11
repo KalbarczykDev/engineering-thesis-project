@@ -13,21 +13,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.data.util.Pair;
 import dev.kalbarczyk.util.http.HttpErrorInfo;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -67,21 +63,29 @@ public class UserCompositeIntegration {
     }
 
     public Mono<Tuple2<User, Profile>> createUserAndProfile(final CreateUser body) {
-        var userCall = webClient.post().uri(userServiceUrl)
+        return webClient.post()
+                .uri(userServiceUrl)
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(User.class)
+                .flatMap(user -> {
+                    var minimalProfile = new Profile(
+                            user.userId(),
+                            user.username(),
+                            "I am " + user.username(),
+                            null,
+                            null,
+                            null
+                    );
+                    return webClient.post()
+                            .uri(profileServiceUrl)
+                            .bodyValue(minimalProfile)
+                            .retrieve()
+                            .bodyToMono(Profile.class)
+                            .map(profile -> Tuples.of(user, profile));
+                })
                 .log(log.getName(), FINE)
-                .onErrorMap(WebClientResponseException.class, this::handleException);
-
-        var profileCall = webClient.post().uri(profileServiceUrl)
-                .bodyValue(body)
-                .retrieve()
-                .bodyToMono(Profile.class)
-                .log(log.getName(), FINE)
-                .onErrorMap(WebClientResponseException.class, this::handleException);
-
-        return Mono.zip(userCall, profileCall)
+                .onErrorMap(WebClientResponseException.class, this::handleException)
                 .subscribeOn(publishEventScheduler);
     }
 
@@ -115,13 +119,17 @@ public class UserCompositeIntegration {
 
 
     public Mono<Void> deleteUser(final Long userId) {
+        log.debug("deleteUser: sending DELETE event for userId: {}", userId);
         return Mono.fromRunnable(() -> sendMessage("users-out-0", new Event<>(Event.Type.DELETE, userId, null)))
-                .subscribeOn(publishEventScheduler).then();
+                .subscribeOn(publishEventScheduler)
+                .then();
     }
 
     public Mono<Void> deleteProfile(final Long userId) {
+        log.debug("deleteProfile: sending DELETE event for userId: {}", userId);
         return Mono.fromRunnable(() -> sendMessage("profiles-out-0", new Event<>(Event.Type.DELETE, userId, null)))
-                .subscribeOn(publishEventScheduler).then();
+                .subscribeOn(publishEventScheduler)
+                .then();
     }
 
 
@@ -140,14 +148,6 @@ public class UserCompositeIntegration {
                 .map(_ -> new Health.Builder().up().build())
                 .onErrorResume(ex -> Mono.just(new Health.Builder().down(ex).build()))
                 .log(log.getName(), FINE);
-    }
-
-    private String getErrorMessage(final HttpClientErrorException ex) {
-        try {
-            return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
-        } catch (IOException ioex) {
-            return ex.getMessage();
-        }
     }
 
 
