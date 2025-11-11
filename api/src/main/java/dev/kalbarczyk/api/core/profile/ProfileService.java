@@ -2,6 +2,7 @@ package dev.kalbarczyk.api.core.profile;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 
 public interface ProfileService {
@@ -17,7 +18,7 @@ public interface ProfileService {
             consumes = "application/json",
             produces = "application/json"
     )
-    Profile createProfile(final @Valid @RequestBody Profile profile);
+    Mono<Profile> createProfile(final @Valid @RequestBody Profile profile);
 
     /**
      * Deletes the profile for the given userId.
@@ -25,7 +26,7 @@ public interface ProfileService {
      * @param userId ID of the user to delete the profile for
      */
     @DeleteMapping(value = "/profiles")
-    void deleteProfile(final @RequestParam Long userId);
+    Mono<Void> deleteProfile(final @RequestParam Long userId);
 
 
     /**
@@ -37,7 +38,7 @@ public interface ProfileService {
     @GetMapping(
             value = "/profiles/{userId}",
             produces = "application/json")
-    Profile getProfile(final @PathVariable Long userId);
+    Mono<Profile> getProfile(final @PathVariable Long userId);
 
 
     /**
@@ -52,6 +53,6 @@ public interface ProfileService {
             consumes = "application/json",
             produces = "application/json"
     )
-    Profile updateProfile(final @PathVariable Long userId, @Valid @RequestBody UpdateProfile profile);
+    Mono<Profile> updateProfile(final @PathVariable Long userId, @Valid @RequestBody UpdateProfile profile);
 
 }

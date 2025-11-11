@@ -11,7 +11,11 @@ import dev.kalbarczyk.profileservice.persistence.ProfileRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+
+import static java.util.logging.Level.FINE;
 
 
 @RestController
@@ -21,58 +25,73 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository repository;
     private final ProfileMapper mapper;
-    private final GridFSBucket bucket;
 
 
     @Override
-    public Profile createProfile(final @Valid Profile profile) {
-        var newEntity = mapper.apiToEntity(profile);
-        var savedEntity = repository.save(newEntity);
-        log.debug("createProfile: entity created for userID: {}", profile.userId());
-        return mapper.entityToApi(savedEntity);
+    public Mono<Profile> createProfile(final @Valid Profile profile) {
+
+        if (profile.userId() < 1) {
+            throw new InvalidInputException("Invalid userId:" + profile.userId());
+        }
+
+        log.info("createProfile: tries to create profile for userId {}", profile.userId());
+
+        return repository.save(mapper.apiToEntity(profile))
+                .log(log.getName(), FINE)
+                .onErrorMap(
+                        DuplicateKeyException.class,
+                        _ -> new InvalidInputException("Duplicate key,  userId: " + profile.userId()))
+                .map(mapper::entityToApi);
     }
 
     @Override
-    public void deleteProfile(final Long userId) {
+    public Mono<Void> deleteProfile(final Long userId) {
+
+        if (userId < 1) {
+            throw new InvalidInputException("Invalid userId:" + userId);
+        }
+
         log.debug("deleteProfile: tries to delete an entity with userId: {}", userId);
-        repository.findById(userId).ifPresent(repository::delete);
+        return repository.findByUserId(userId).log(log.getName(), FINE).map(repository::delete).flatMap(e -> e);
     }
 
     @Override
-    public Profile getProfile(final Long userId) {
+    public Mono<Profile> getProfile(final Long userId) {
         log.debug("getProfile: tries to get an entity with userId: {}", userId);
 
         if (userId < 1) {
             throw new InvalidInputException("Invalid userId:" + userId);
         }
 
-        var entity = repository.findById(userId).orElseThrow(
-                () -> new NotFoundException("No Profile found for userId: " + userId)
-        );
+        log.info("Will get profile info for userId={}", userId);
 
-        var response = mapper.entityToApi(entity);
+        return repository.findByUserId(userId)
+                .switchIfEmpty(Mono.error(new NotFoundException("No profile found for userId: " + userId)))
+                .log(log.getName(), FINE)
+                .map(mapper::entityToApi);
 
-        log.debug("getProfile: found userId: {}", response.userId());
-        return response;
     }
 
     @Override
-    public Profile updateProfile(final Long userId, final UpdateProfile profile) {
+    public Mono<Profile> updateProfile(final Long userId, final UpdateProfile profile) {
         log.debug("updateProfile: tries to get an entity with userId: {}", userId);
 
-        var entity = repository.findById(userId).orElseThrow(
-                () -> new NotFoundException("No Profile found for userId: " + userId)
-        );
+        if (userId < 1) {
+            throw new InvalidInputException("Invalid userId:" + userId);
+        }
 
-        entity.setDisplayName(profile.displayName());
-        entity.setBio(profile.bio());
-        entity.setLocation(profile.location());
-
-        var savedEntity = repository.save(entity);
-        var response = mapper.entityToApi(savedEntity);
-
-        log.debug("updateProfile: modified an entity with userId: {}", response.userId());
-
-        return response;
+        return repository.findByUserId(userId)
+                .switchIfEmpty(Mono.error(new NotFoundException("No profile found for userId: " + userId)))
+                .flatMap(existingEntity -> {
+                    existingEntity.setDisplayName(profile.displayName());
+                    existingEntity.setBio(profile.bio());
+                    existingEntity.setLocation(profile.location());
+                    return repository.save(existingEntity);
+                })
+                .map(mapper::entityToApi)
+                .doOnSuccess(updated ->
+                        log.debug("updateProfile: modified an entity with userId: {}", updated.userId())
+                )
+                .log(log.getName(), FINE);
     }
 }
