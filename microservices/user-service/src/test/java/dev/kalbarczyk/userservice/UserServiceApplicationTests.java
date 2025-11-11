@@ -31,6 +31,7 @@ class UserServiceApplicationTests extends MySqlTestBase {
     @Autowired
     private UserRepository repository;
 
+    private UserEntity savedUser;
 
     @Autowired
     @Qualifier("messageProcessor")
@@ -39,6 +40,9 @@ class UserServiceApplicationTests extends MySqlTestBase {
     @BeforeEach
     void setupDb() {
         repository.deleteAll();
+
+        var user = UserEntity.builder().username("username").slug("username").password("password").email("email").build();
+        savedUser = repository.save(user);
     }
 
     @Test
