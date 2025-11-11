@@ -21,6 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.util.Pair;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 import java.time.LocalDateTime;
 
@@ -39,19 +41,18 @@ class UserCompositeServiceApplicationTests {
     @BeforeEach
     void setUp() {
         when(compositeIntegration.getUser(USER_ID_OK))
-                .thenReturn(
-                        new User(
-                                USER_ID_OK,
-                                "username",
-                                "username",
-                                "email",
-                                "password",
-                                LocalDateTime.now().toString(),
-                                LocalDateTime.now().toString()
-                        ));
+                .thenReturn(Mono.just(new User(
+                        USER_ID_OK,
+                        "username",
+                        "username",
+                        "email",
+                        "password",
+                        LocalDateTime.now().toString(),
+                        LocalDateTime.now().toString()
+                )));
 
         when(compositeIntegration.getProfile(USER_ID_OK))
-                .thenReturn(
+                .thenReturn(Mono.just(
                         new Profile(
                                 USER_ID_OK,
                                 "displayName",
@@ -59,7 +60,7 @@ class UserCompositeServiceApplicationTests {
                                 "location",
                                 LocalDateTime.now().toString(),
                                 LocalDateTime.now().toString()
-                        ));
+                        )));
 
         when(compositeIntegration.getUser(USER_ID_NOT_FOUND))
                 .thenThrow(new NotFoundException("NOT FOUND: " + USER_ID_NOT_FOUND));
@@ -68,23 +69,23 @@ class UserCompositeServiceApplicationTests {
                 .thenThrow(new InvalidInputException("INVALID: " + USER_ID_INVALID));
 
         when(compositeIntegration.updateProfile(eq(USER_ID_OK), any(UpdateProfile.class)))
-                .thenReturn(new Profile(
+                .thenReturn(Mono.just(new Profile(
                         USER_ID_OK,
                         "newDisplayName",
                         "newBio",
                         "newLocation",
                         LocalDateTime.now().toString(),
                         LocalDateTime.now().toString()
-                ));
+                )));
 
         when(compositeIntegration.createUserAndProfile(any(CreateUser.class)))
-                .thenReturn(Pair.of(
-                        new User(1L, "username", "username", "email", "password",
+                .thenReturn(Mono.zip(
+                        Mono.just(new User(1L, "username", "username", "email", "password",
                                 LocalDateTime.now().toString(),
-                                LocalDateTime.now().toString()),
-                        new Profile(1L, "displayName", "bio", "location",
+                                LocalDateTime.now().toString())),
+                        Mono.just(new Profile(1L, "displayName", "bio", "location",
                                 LocalDateTime.now().toString(),
-                                LocalDateTime.now().toString())
+                                LocalDateTime.now().toString()))
                 ));
     }
 
@@ -124,7 +125,6 @@ class UserCompositeServiceApplicationTests {
                 .jsonPath("$.bio").isEqualTo("newBio")
                 .jsonPath("$.location").isEqualTo("newLocation");
     }
-
 
 
     @Test

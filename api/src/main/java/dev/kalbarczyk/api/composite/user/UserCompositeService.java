@@ -4,6 +4,7 @@ import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.core.user.CreateUser;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 public interface UserCompositeService {
 
@@ -17,7 +18,7 @@ public interface UserCompositeService {
             consumes = "application/json",
             produces = "application/json"
     )
-    UserProfileComposite createUser(final @RequestBody CreateUser body);
+    Mono<UserProfileComposite> createUser(final @RequestBody CreateUser body);
 
     /**
      * Gets the user and profile information.
@@ -28,7 +29,7 @@ public interface UserCompositeService {
     @GetMapping(
             value = "/user-composite/{userId}/profile",
             produces = "application/json")
-    UserProfileComposite getUserProfile(final @PathVariable Long userId);
+    Mono<UserProfileComposite> getUserProfile(final @PathVariable Long userId);
 
     /**
      * Updates the profile information for the given userId
@@ -41,7 +42,7 @@ public interface UserCompositeService {
             value = "/user-composite/{userId}/profile",
             consumes = "application/json",
             produces = "application/json")
-    Profile updateProfile(final @PathVariable Long userId, final @RequestBody UpdateProfile body);
+    Mono<Profile> updateProfile(final @PathVariable Long userId, final @RequestBody UpdateProfile body);
 
 
     /**
@@ -50,7 +51,7 @@ public interface UserCompositeService {
      * @param userId ID of the user
      */
     @DeleteMapping(value = "/user-composite/{userId}")
-    void deleteUser(final @PathVariable Long userId);
+    Mono<Void> deleteUser(final @PathVariable Long userId);
 
 
 }

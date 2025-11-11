@@ -7,10 +7,12 @@ import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
-import dev.kalbarczyk.api.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+
+import static java.util.logging.Level.FINE;
 
 
 @RestController
@@ -21,15 +23,17 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     private final UserCompositeIntegration integration;
 
     @Override
-    public UserProfileComposite createUser(final CreateUser body) {
+    public Mono<UserProfileComposite> createUser(final CreateUser body) {
         try {
             log.debug("createCompositeUser: creates a new composite entity for username: {}", body.username());
-            var result = integration.createUserAndProfile(body);
-            var user = result.getFirst();
-            var profile = result.getSecond();
 
-            log.debug("createCompositeUser: composite entities created for username: {}", body.username());
-            return createUserAggregate(user, profile);
+            var monoResult = integration.createUserAndProfile(body);
+            return monoResult.flatMap(tuple -> {
+                var user = tuple.getT1();
+                var profile = tuple.getT2();
+                log.debug("createCompositeUser: composite entities created for username: {}", body.username());
+                return createUserAggregate(user, profile);
+            });
         } catch (InvalidInputException e) {
             log.debug("createCompositeUser failed: {}", e.getMessage());
             throw e;
@@ -41,24 +45,18 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     }
 
     @Override
-    public UserProfileComposite getUserProfile(final Long userId) {
+    public Mono<UserProfileComposite> getUserProfile(final Long userId) {
 
-        var user = integration.getUser(userId);
-        if (user == null) {
-            throw new NotFoundException("No user found for userId: " + userId);
-        }
+        log.info("Will get composite user info for userId: {}", userId);
 
-        var profile = integration.getProfile(userId);
-
-        if (profile == null) {
-            throw new NotFoundException("No profile found for userId: " + userId);
-        }
-
-        return createUserAggregate(user, profile);
+        return Mono.zip(integration.getUser(userId), integration.getProfile(userId))
+                .flatMap(tuple -> createUserAggregate(tuple.getT1(), tuple.getT2()))
+                .doOnError(ex -> log.warn("getUserProfile failed: {}", ex.toString()))
+                .log(log.getName(), FINE);
     }
 
     @Override
-    public Profile updateProfile(final Long userId, final UpdateProfile body) {
+    public Mono<Profile> updateProfile(final Long userId, final UpdateProfile body) {
         log.debug("updateCompositeUser: updates profile entity for userId: {}", userId);
         var updatedProfile = integration.updateProfile(userId, body);
         log.debug("updateCompositeUser: updated profile entity for userId: {}", userId);
@@ -66,21 +64,25 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     }
 
     @Override
-    public void deleteUser(final Long userId) {
+    public Mono<Void> deleteUser(final Long userId) {
         log.debug("deleteCompositeUser: deletes composite entity for userId: {}", userId);
 
-        integration.deleteUser(userId);
-        integration.deleteProfile(userId);
-        //TODO: Workout deletion when workout microservice is ready
+        var userDelete = integration.deleteUser(userId);
+        var profileDelete = integration.deleteProfile(userId);
 
-        log.debug("deleteCompositeUser: composite entities deleted for userId: {}", userId);
+        if (userDelete == null) userDelete = Mono.empty();
+        if (profileDelete == null) profileDelete = Mono.empty();
+
+        return Mono.when(userDelete, profileDelete)
+                .doOnSuccess(ignored -> log.debug("deleteCompositeUser: composite entities deleted for userId: {}", userId))
+                .doOnError(ex -> log.warn("deleteCompositeUser failed: {}", ex.toString()));
     }
 
 
-    private UserProfileComposite createUserAggregate(
+    private Mono<UserProfileComposite> createUserAggregate(
             final User user, final Profile profile
     ) {
-        return new UserProfileComposite(
+        return Mono.just(new UserProfileComposite(
                 user.userId(),
                 user.username(),
                 user.slug(),
@@ -89,7 +91,7 @@ public class UserCompositeServiceImpl implements UserCompositeService {
                 profile.bio(),
                 profile.location(),
                 user.createdAt()
-        );
+        ));
     }
 
 

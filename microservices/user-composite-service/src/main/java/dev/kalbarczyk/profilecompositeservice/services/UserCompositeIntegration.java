@@ -5,143 +5,141 @@ import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
+import dev.kalbarczyk.api.event.Event;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.data.util.Pair;
 import dev.kalbarczyk.util.http.HttpErrorInfo;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.util.function.Tuple2;
 
 import java.io.IOException;
+import java.util.logging.Level;
+
+import static java.util.logging.Level.FINE;
 
 @Component
 @Slf4j
 public class UserCompositeIntegration {
 
-
-    private final RestTemplate restTemplate;
+    private final WebClient webClient;
     private final ObjectMapper mapper;
+
     private final String profileServiceUrl;
     private final String userServiceUrl;
 
+    private final StreamBridge streamBridge;
+
+    private final Scheduler publishEventScheduler;
+
     public UserCompositeIntegration(
-            final RestTemplate restTemplate,
-            final ObjectMapper objectMapper,
-            final @Value("${app.profile-service.host}") String profileServiceHost,
-            final @Value("${app.profile-service.port}") int profileServicePort,
+            final @Qualifier("publishEventScheduler") Scheduler publishEventScheduler,
+            final WebClient.Builder webClient,
+            final ObjectMapper mapper,
+            final StreamBridge streamBridge,
             final @Value("${app.user-service.host}") String userServiceHost,
-            final @Value("${app.user-service.port}") int userServicePort
+            final @Value("${app.user-service.port}") int userServicePort,
+            final @Value("${app.profile-service.host}") String profileServiceHost,
+            final @Value("${app.profile-service.port}") int profileServicePort
     ) {
-        this.restTemplate = restTemplate;
-        this.mapper = objectMapper;
+        this.publishEventScheduler = publishEventScheduler;
+        this.webClient = webClient.build();
+        this.mapper = mapper;
+        this.streamBridge = streamBridge;
         this.profileServiceUrl = "http://" + profileServiceHost + ":" + profileServicePort + "/profiles";
         this.userServiceUrl = "http://" + userServiceHost + ":" + userServicePort + "/users";
     }
 
-    public Pair<User, Profile> createUserAndProfile(final CreateUser body) {
-        try {
-            log.debug("Will post a new user to URL: {}", userServiceUrl);
+    public Mono<Tuple2<User, Profile>> createUserAndProfile(final CreateUser body) {
+        var userCall = webClient.post().uri(userServiceUrl)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(User.class)
+                .log(log.getName(), FINE)
+                .onErrorMap(WebClientResponseException.class, this::handleException);
 
-            var user = restTemplate.postForObject(userServiceUrl, body, User.class);
+        var profileCall = webClient.post().uri(profileServiceUrl)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(Profile.class)
+                .log(log.getName(), FINE)
+                .onErrorMap(WebClientResponseException.class, this::handleException);
 
-            log.debug("Will post new profile to URL: {}", profileServiceUrl);
-
-            assert user != null;
-            var minimalProfile = new Profile(user.userId(),
-                    user.username(),
-                    "I am " + user.username(),
-                    null,
-                    null,
-                    null);
-
-            restTemplate.postForObject(profileServiceUrl, minimalProfile, Profile.class);
-            log.debug("Created user and profile entities for username: {}", body.username());
-
-            return Pair.of(user, minimalProfile);
-        } catch (HttpClientErrorException ex) {
-            throw handleHttpClientException(ex);
-        }
+        return Mono.zip(userCall, profileCall)
+                .subscribeOn(publishEventScheduler);
     }
 
-    public User getUser(final Long userId) {
-        try {
-            var url = userServiceUrl + "/" + userId;
-            log.debug("Will get a user from URL: {}", url);
+    public Mono<User> getUser(final Long userId) {
+        var url = userServiceUrl + "/" + userId;
+        log.debug("Will get a user from URL: {}", url);
 
-            return restTemplate.getForObject(url, User.class);
-
-        } catch (HttpClientErrorException ex) {
-            throw handleHttpClientException(ex);
-        }
+        return webClient.get().uri(url).retrieve().bodyToMono(User.class).log(log.getName(), Level.FINE)
+                .onErrorMap(WebClientResponseException.class, this::handleException);
     }
 
-    public Profile getProfile(final Long userId) {
-        try {
-            var url = profileServiceUrl + "/" + userId;
-            log.debug("Will get a profile from URL: {}", url);
+    public Mono<Profile> getProfile(final Long userId) {
+        var url = profileServiceUrl + "/" + userId;
+        log.debug("Will get a profile from URL: {}", url);
 
-            return restTemplate.getForObject(url, Profile.class);
-
-        } catch (HttpClientErrorException ex) {
-            throw handleHttpClientException(ex);
-        }
+        return webClient.get().uri(url).retrieve().bodyToMono(Profile.class).log(log.getName(), FINE)
+                .onErrorMap(WebClientResponseException.class, this::handleException);
     }
 
 
-    public Profile updateProfile(final Long userId, final UpdateProfile body) {
-        try {
-            var url = profileServiceUrl + "/" + userId;
-            log.debug("Will update a profile on URL: {}", url);
-            var request = new HttpEntity<>(body);
-            var response = restTemplate.exchange(url, HttpMethod.PUT, request, Profile.class);
-            return response.getBody();
-        } catch (HttpClientErrorException ex) {
-            throw handleHttpClientException(ex);
-        }
+    public Mono<Profile> updateProfile(final Long userId, final UpdateProfile body) {
+        var url = profileServiceUrl + "/" + userId;
+        log.debug("Will update a profile on URL: {}", url);
+        return webClient.put().uri(url)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(Profile.class)
+                .log(log.getName(), FINE)
+                .onErrorMap(WebClientResponseException.class, this::handleException);
     }
 
 
-    public void deleteUser(final Long userId) {
-        try {
-            var userUrl = userServiceUrl + "?userId=" + userId;
-            log.debug("Will delete a user from URL: {}", userUrl);
-            restTemplate.delete(userUrl);
-        } catch (HttpClientErrorException ex) {
-            throw handleHttpClientException(ex);
-        }
+    public Mono<Void> deleteUser(final Long userId) {
+        return Mono.fromRunnable(() -> sendMessage("users-out-0", new Event<>(Event.Type.DELETE, userId, null)))
+                .subscribeOn(publishEventScheduler).then();
     }
 
-    public void deleteProfile(final Long userId) {
-        try {
-            var profileUrl = profileServiceUrl + "?userId=" + userId;
-            log.debug("Will call the deleteProfile API on URL: {}", profileUrl);
-            restTemplate.delete(profileUrl);
-
-        } catch (HttpClientErrorException ex) {
-            throw handleHttpClientException(ex);
-        }
+    public Mono<Void> deleteProfile(final Long userId) {
+        return Mono.fromRunnable(() -> sendMessage("profiles-out-0", new Event<>(Event.Type.DELETE, userId, null)))
+                .subscribeOn(publishEventScheduler).then();
     }
 
 
-    private RuntimeException handleHttpClientException(final HttpClientErrorException ex) {
-        switch (HttpStatus.resolve(ex.getStatusCode().value())) {
-            case NOT_FOUND:
-                return new NotFoundException(getErrorMessage(ex));
+    public Mono<Health> getProfileHealth() {
+        return getHealth(profileServiceUrl);
+    }
 
-            case UNPROCESSABLE_ENTITY, BAD_REQUEST:
-                return new InvalidInputException(getErrorMessage(ex));
-            case null:
-            default:
-                log.warn("Got an unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
-                log.warn("Error body: {}", ex.getResponseBodyAsString());
-                return ex;
-        }
+    public Mono<Health> getUserHealth() {
+        return getHealth(userServiceUrl);
+    }
+
+    private Mono<Health> getHealth(String url) {
+        url += "/actuator/health";
+        log.debug("Will call the Health API on URL: {}", url);
+        return webClient.get().uri(url).retrieve().bodyToMono(String.class)
+                .map(_ -> new Health.Builder().up().build())
+                .onErrorResume(ex -> Mono.just(new Health.Builder().down(ex).build()))
+                .log(log.getName(), FINE);
     }
 
     private String getErrorMessage(final HttpClientErrorException ex) {
@@ -152,5 +150,44 @@ public class UserCompositeIntegration {
         }
     }
 
+
+    private void sendMessage(final String bindingName, @SuppressWarnings("rawtypes") final Event event) {
+        log.debug("Sending a {} message to {}", event.getEventType(), bindingName);
+        var message = MessageBuilder.withPayload(event)
+                .setHeader("partitionKey", event.getKey())
+                .build();
+        streamBridge.send(bindingName, message);
+    }
+
+    private Throwable handleException(final Throwable ex) {
+
+        if (!(ex instanceof WebClientResponseException wcre)) {
+            log.warn("Got a unexpected error: {}, will rethrow it", ex.toString());
+            return ex;
+        }
+
+        switch (HttpStatus.resolve(wcre.getStatusCode().value())) {
+
+            case NOT_FOUND:
+                return new NotFoundException(getErrorMessage(wcre));
+
+            case UNPROCESSABLE_ENTITY:
+                return new InvalidInputException(getErrorMessage(wcre));
+
+            case null:
+            default:
+                log.warn("Got an unexpected HTTP error: {}, will rethrow it", wcre.getStatusCode());
+                log.warn("Error body: {}", wcre.getResponseBodyAsString());
+                return ex;
+        }
+    }
+
+    private String getErrorMessage(final WebClientResponseException ex) {
+        try {
+            return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
+        } catch (IOException ioex) {
+            return ex.getMessage();
+        }
+    }
 
 }
