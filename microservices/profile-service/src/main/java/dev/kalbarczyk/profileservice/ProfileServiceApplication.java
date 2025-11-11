@@ -1,6 +1,7 @@
 package dev.kalbarczyk.profileservice;
 
 import dev.kalbarczyk.profileservice.persistence.ProfileEntity;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -17,19 +18,11 @@ import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
 
 @Slf4j
 @SpringBootApplication
+@RequiredArgsConstructor
 @ComponentScan("dev.kalbarczyk")
 public class ProfileServiceApplication {
 
-    public static void main(String[] args) {
-        var ctx = SpringApplication.run(ProfileServiceApplication.class, args);
-        var mongodDbHost = ctx.getEnvironment().getProperty("spring.data.mongodb.host");
-        var mongodDbPort = ctx.getEnvironment().getProperty("spring.data.mongodb.port");
-        log.info("Connected to MongoDb: {}:{}", mongodDbHost, mongodDbPort);
-
-    }
-
-    @Autowired
-    ReactiveMongoOperations mongoTemplate;
+    private final ReactiveMongoOperations mongoTemplate;
 
     @EventListener(ContextRefreshedEvent.class)
     public void initIndicesAfterStartup() {
@@ -39,6 +32,14 @@ public class ProfileServiceApplication {
 
         var indexOps = mongoTemplate.indexOps(ProfileEntity.class);
         resolver.resolveIndexFor(ProfileEntity.class).forEach(e -> indexOps.createIndex(e).block());
+    }
+
+    public static void main(String[] args) {
+        var ctx = SpringApplication.run(ProfileServiceApplication.class, args);
+        var mongodDbHost = ctx.getEnvironment().getProperty("spring.data.mongodb.host");
+        var mongodDbPort = ctx.getEnvironment().getProperty("spring.data.mongodb.port");
+        log.info("Connected to MongoDb: {}:{}", mongodDbHost, mongodDbPort);
+
     }
 
 }
