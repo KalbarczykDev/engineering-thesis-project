@@ -7,6 +7,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
   profile:
     build: microservices/profile-service
     mem_limit: 512m
@@ -14,6 +16,8 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       mongodb:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
 
   user-composite:
@@ -23,6 +27,9 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
 
   mongodb:
@@ -56,3 +63,11 @@ services:
       interval: 5s
       timeout: 2s
       retries: 60
+
+
+  rabbitmq:
+    image: rabbitmq:4.0.7-management
+    mem_limit: 512m
+    ports:
+      - "5672:5672"
+      - "15672:15672"
