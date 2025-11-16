@@ -15,6 +15,11 @@ import org.springframework.cloud.stream.function.StreamBridge;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import dev.kalbarczyk.util.http.HttpErrorInfo;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -32,6 +37,8 @@ import static java.util.logging.Level.FINE;
 @Component
 @Slf4j
 public class UserCompositeIntegration {
+
+    private final SecurityContext nullSecCtx = new SecurityContextImpl();
 
     private final WebClient webClient;
     private final ObjectMapper mapper;
@@ -183,4 +190,36 @@ public class UserCompositeIntegration {
         }
     }
 
+    private Mono<SecurityContext> getLogAuthorizationInfoMono() {
+        return getSecurityContextMono().doOnNext(this::logAuthorizationInfo);
+    }
+
+    private Mono<SecurityContext> getSecurityContextMono() {
+        return ReactiveSecurityContextHolder.getContext().defaultIfEmpty(nullSecCtx);
+    }
+
+    private void logAuthorizationInfo(final SecurityContext sc) {
+        if (sc != null && sc.getAuthentication() != null && sc.getAuthentication() instanceof JwtAuthenticationToken) {
+            var jwtToken = ((JwtAuthenticationToken) sc.getAuthentication()).getToken();
+            logAuthorizationInfo(jwtToken);
+        } else {
+            log.warn("No JWT based Authentication supplied, running tests are we?");
+        }
+    }
+
+    private void logAuthorizationInfo(final Jwt jwt) {
+        if (jwt == null) {
+            log.warn("No JWT supplied, running tests are we?");
+        } else {
+            if (log.isDebugEnabled()) {
+                var issuer = jwt.getIssuer();
+                var audience = jwt.getAudience();
+                var subject = jwt.getClaims().get("sub");
+                var scopes = jwt.getClaims().get("scope");
+                var expires = jwt.getClaims().get("exp");
+
+                log.debug("Authorization info: Subject: {}, scopes: {}, expires {}: issuer: {}, audience: {}", subject, scopes, expires, issuer, audience);
+            }
+        }
+    }
 }
