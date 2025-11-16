@@ -1,10 +1,10 @@
-package dev.kalbarczyk.spring_cloud.eurekaserver;
+package dev.kalbarczyk.springcloud.gateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EurekaServerApplicationTests {
+class GatewayApplicationTests {
 
 	@Test
 	void contextLoads() {
