@@ -71,7 +71,7 @@ spring.config.activate.on-profile: docker
 
 server.port: 8080
 
-app.ereureka-server: eureka
+app.eureka-server: eureka
 
 
 spring.rabbitmq.host: rabbitmq
