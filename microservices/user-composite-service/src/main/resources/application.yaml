@@ -1,6 +1,19 @@
 server.port: 7001
 server.error.include-message: always
 
+
+app.eureka-server: localhost
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${app.eureka-server}:8761/eureka/
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    registryFetchIntervalSeconds: 5
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5
+
 app:
   user-service:
     host: localhost
@@ -40,11 +53,15 @@ logging:
 
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
-
+spring:
+  application:
+    name: user-composite
 ---
 spring.config.activate.on-profile: docker
 
 server.port: 8080
+
+app.eureka-server: eureka
 
 app:
   user-service:

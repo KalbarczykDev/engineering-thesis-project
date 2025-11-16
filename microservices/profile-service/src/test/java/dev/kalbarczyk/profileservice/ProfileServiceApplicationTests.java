@@ -19,7 +19,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import java.util.function.Consumer;
 
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT,  properties = {"eureka.client.enabled=false"})
 class ProfileServiceApplicationTests extends MongoDbTestBase {
 
     @Autowired

@@ -24,7 +24,8 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT,  properties = {"eureka.client.enabled=false"})
+
 class UserCompositeServiceApplicationTests {
 
     private static final Long USER_ID_OK = 1L;
