@@ -1,7 +1,6 @@
 server.port: 7001
 server.error.include-message: always
 
-
 app.eureka-server: localhost
 
 eureka:
@@ -14,13 +13,6 @@ eureka:
     leaseRenewalIntervalInSeconds: 5
     leaseExpirationDurationInSeconds: 5
 
-app:
-  user-service:
-    host: localhost
-    port: 7002
-  profile-service:
-    host: localhost
-    port: 7003
 
 spring.cloud.stream:
   defaultBinder: rabbit
@@ -63,13 +55,6 @@ server.port: 8080
 
 app.eureka-server: eureka
 
-app:
-  user-service:
-    host: user
-    port: 8080
-  profile-service:
-    host: profile
-    port: 8080
 
 spring.rabbitmq.host: rabbitmq
 
