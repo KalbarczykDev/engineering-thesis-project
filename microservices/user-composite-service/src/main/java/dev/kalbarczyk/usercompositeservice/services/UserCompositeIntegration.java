@@ -10,7 +10,6 @@ import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.function.StreamBridge;
 
@@ -37,8 +36,8 @@ public class UserCompositeIntegration {
     private final WebClient webClient;
     private final ObjectMapper mapper;
 
-    private final String profileServiceUrl;
-    private final String userServiceUrl;
+    private final String profileServiceUrl = "http://profile/profiles";
+    private final String userServiceUrl = "http://user/users";
 
     private final StreamBridge streamBridge;
 
@@ -48,18 +47,12 @@ public class UserCompositeIntegration {
             final @Qualifier("publishEventScheduler") Scheduler publishEventScheduler,
             final WebClient.Builder webClient,
             final ObjectMapper mapper,
-            final StreamBridge streamBridge,
-            final @Value("${app.user-service.host}") String userServiceHost,
-            final @Value("${app.user-service.port}") int userServicePort,
-            final @Value("${app.profile-service.host}") String profileServiceHost,
-            final @Value("${app.profile-service.port}") int profileServicePort
+            final StreamBridge streamBridge
     ) {
         this.publishEventScheduler = publishEventScheduler;
         this.webClient = webClient.build();
         this.mapper = mapper;
         this.streamBridge = streamBridge;
-        this.profileServiceUrl = "http://" + profileServiceHost + ":" + profileServicePort + "/profiles";
-        this.userServiceUrl = "http://" + userServiceHost + ":" + userServicePort + "/users";
     }
 
     public Mono<Tuple2<User, Profile>> createUserAndProfile(final CreateUser body) {
