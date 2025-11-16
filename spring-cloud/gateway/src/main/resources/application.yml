@@ -21,15 +21,11 @@ eureka:
 
 spring.cloud.gateway.server.webflux.routes:
 
-- id: product-composite
-  uri: lb://product-composite
+- id: user-composite
+  uri: lb://user-composite
   predicates:
-  - Path=/product-composite/**
+  - Path=/user-composite/**
 
-- id: product-composite-swagger-ui
-  uri: lb://product-composite
-  predicates:
-  - Path=/openapi/**
 
 - id: eureka-api
   uri: http://${app.eureka-server}:8761

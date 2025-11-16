@@ -25,7 +25,7 @@ public class HealthCheckConfiguration {
     @Bean
     ReactiveHealthContributor healthcheckMicroservices() {
 
-        final var registry = new LinkedHashMap<String, ReactiveHealthIndicator>();
+        var registry = new LinkedHashMap<String, ReactiveHealthIndicator>();
 
         registry.put("user", () -> getHealth("http://user"));
         registry.put("profile", () -> getHealth("http://profile"));
@@ -34,7 +34,7 @@ public class HealthCheckConfiguration {
         return CompositeReactiveHealthContributor.fromMap(registry);
     }
 
-    private Mono<Health> getHealth(String baseUrl) {
+    private Mono<Health> getHealth(final String baseUrl) {
         var url = baseUrl + "/actuator/health";
         log.debug("Setting up a call to the Health API on URL: {}", url);
         return webClient.get().uri(url).retrieve().bodyToMono(String.class)
