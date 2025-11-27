@@ -11,6 +11,7 @@ services:
         condition: service_healthy
 
 
+
   profile:
     build: microservices/profile-service
     mem_limit: 512m
@@ -21,7 +22,6 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-
   user-composite:
     build: microservices/user-composite-service
     mem_limit: 512m
@@ -32,6 +32,9 @@ services:
         condition: service_healthy
       auth-server:
         condition: service_healthy
+      eureka:
+        condition: service_started
+
 
 
 
@@ -85,6 +88,7 @@ services:
     mem_limit: 512m
 
 
+
   gateway:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -95,6 +99,8 @@ services:
     depends_on:
       auth-server:
         condition: service_healthy
+      eureka:
+        condition: service_started
 
   auth-server:
     environment:
@@ -106,3 +112,6 @@ services:
       interval: 5s
       timeout: 2s
       retries: 60
+    depends_on:
+      eureka:
+        condition: service_started

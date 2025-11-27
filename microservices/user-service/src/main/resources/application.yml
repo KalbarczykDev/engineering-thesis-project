@@ -44,8 +44,11 @@ eureka:
     initialInstanceInfoReplicationIntervalSeconds: 5
     registryFetchIntervalSeconds: 5
   instance:
+    hostname: user
+    preferIpAddress: false
     leaseRenewalIntervalInSeconds: 5
     leaseExpirationDurationInSeconds: 5
+
 
 logging:
   level:
