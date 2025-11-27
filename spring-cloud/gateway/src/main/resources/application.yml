@@ -17,13 +17,6 @@ spring.ssl.bundle.jks.gateway:
 
 server.ssl.bundle: gateway
 
-
-app:
-  eureka-username: u
-  eureka-password: p
-  eureka-server: localhost
-  auth-server: localhost
-
 eureka:
   client:
     serviceUrl:
@@ -37,27 +30,27 @@ eureka:
 spring.cloud.gateway.server.webflux.routes:
 
 - id: user-composite
-  uri: lb://user-composite
+  uri: lb://USER-COMPOSITE
   predicates:
   - Path=/user-composite/**
 
 
 - id: eureka-api
-  uri: http://${app.eureka-server}:8761
+  uri: http://eureka:8761
   predicates:
   - Path=/eureka/api/{segment}
   filters:
   - SetPath=/eureka/{segment}
 
 - id: eureka-web-start
-  uri: http://${app.eureka-server}:8761
+  uri: http://eureka:8761
   predicates:
   - Path=/eureka/web
   filters:
   - SetPath=/
 
 - id: eureka-web-other
-  uri: http://${app.eureka-server}:8761
+  uri: http://eureka:8761
   predicates:
   - Path=/eureka/**
 
@@ -84,18 +77,26 @@ spring.cloud.gateway.server.webflux.routes:
   filters:
   - SetPath=/501
 
-management.endpoint.health.show-details: "ALWAYS"
-management.endpoints.web.exposure.include: "*"
+# Management Actuator Configuration
+management:
+  endpoint:
+    health:
+      show-details: "ALWAYS"
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
+# Logging Configuration
 logging:
   level:
     root: INFO
-    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: INFO
-    org.springframework.cloud.gateway: TRACE
+    org:
+      springframework:
+        cloud:
+          gateway: TRACE
+          gateway.route.RouteDefinitionRouteLocator: INFO
 
----
-spring.config.activate.on-profile: docker
 
-app:
-  eureka-server: eureka
-  auth-server: auth-server
+
+
