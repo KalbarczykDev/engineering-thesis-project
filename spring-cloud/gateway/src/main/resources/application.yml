@@ -9,11 +9,11 @@ spring.cloud.gateway.server.webflux.trusted-proxies: ".*"
 
 spring.ssl.bundle.jks.gateway:
   key:
-    alias: localhost
+    alias: edge
   keystore:
     type: PKCS12
     location: classpath:keystore/edge.p12
-    password: password
+    password: learnSpring
 
 server.ssl.bundle: gateway
 
@@ -27,7 +27,7 @@ app:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://${app.eureka-server}:8761/eureka/
+       defaultZone: http://u:p@eureka:8761/eureka/
     initialInstanceInfoReplicationIntervalSeconds: 5
     registryFetchIntervalSeconds: 5
   instance:
@@ -84,7 +84,6 @@ spring.cloud.gateway.server.webflux.routes:
   filters:
   - SetPath=/501
 
-management.endpoint.gateway.enabled: true
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
 

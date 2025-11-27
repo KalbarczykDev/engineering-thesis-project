@@ -3,16 +3,12 @@ server.error.include-message: always
 
 spring.application.name: profile
 
-app:
-  eureka-username: u
-  eureka-password: p
-  eureka-server: localhost
+
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: "http://${app.eureka-username}:${app.eureka-
-       password}@${app.eureka-server}:8761/eureka/"
+      defaultZone: http://u:p@eureka:8761/eureka/
     initialInstanceInfoReplicationIntervalSeconds: 5
     registryFetchIntervalSeconds: 5
   instance:
