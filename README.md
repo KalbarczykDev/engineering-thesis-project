@@ -27,7 +27,7 @@ cd engineering-thesis-project
 ```bash
  ./gradlew build && docker compose build && docker compose up -d && docker compose logs -f
 ```
-* Visit ```https://localhost:8080/openapi/swagger-ui.html``` to test the application.
+* Visit ```https://localhost:8443/openapi/swagger-ui.html``` to test the application.
 
 
 ## Troubleshooting

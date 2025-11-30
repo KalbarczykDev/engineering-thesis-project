@@ -106,7 +106,7 @@ public class AuthorizationServerConfig {
 
   @Bean
   public RegisteredClientRepository registeredClientRepository() {
-    RegisteredClient writerClient = RegisteredClient.withId(UUID.randomUUID().toString())
+    var writerClient = RegisteredClient.withId(UUID.randomUUID().toString())
       .clientId("writer")
       .clientSecret("{noop}secret-writer")
       .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -116,13 +116,13 @@ public class AuthorizationServerConfig {
       .redirectUri("https://my.redirect.uri")
       .redirectUri("https://localhost:8443/openapi/swagger-ui/oauth2-redirect.html")
       .scope(OidcScopes.OPENID)
-      .scope("product:read")
-      .scope("product:write")
+      .scope("user:read")
+      .scope("user:write")
       .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
       .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofHours(1)).build())
       .build();
 
-    RegisteredClient readerClient = RegisteredClient.withId(UUID.randomUUID().toString())
+    var readerClient = RegisteredClient.withId(UUID.randomUUID().toString())
       .clientId("reader")
       .clientSecret("{noop}secret-reader")
       .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -132,7 +132,7 @@ public class AuthorizationServerConfig {
       .redirectUri("https://my.redirect.uri")
       .redirectUri("https://localhost:8443/openapi/swagger-ui/oauth2-redirect.html")
       .scope(OidcScopes.OPENID)
-      .scope("product:read")
+      .scope("user:read")
       .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
       .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofHours(1)).build())
       .build();
@@ -143,8 +143,8 @@ public class AuthorizationServerConfig {
 
   @Bean
   public JWKSource<SecurityContext> jwkSource() {
-    RSAKey rsaKey = Jwks.generateRsa();
-    JWKSet jwkSet = new JWKSet(rsaKey);
+    var rsaKey = Jwks.generateRsa();
+    var jwkSet = new JWKSet(rsaKey);
     return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
   }
 
@@ -162,7 +162,7 @@ public class AuthorizationServerConfig {
     return (authenticationProviders) ->
       authenticationProviders.forEach((authenticationProvider) -> {
         if (authenticationProvider instanceof OAuth2AuthorizationCodeRequestAuthenticationProvider) {
-          Consumer<OAuth2AuthorizationCodeRequestAuthenticationContext> authenticationValidator =
+          var authenticationValidator =
             // Override default redirect_uri validator
             new CustomRedirectUriValidator()
               // Reuse default scope validator
@@ -180,15 +180,15 @@ public class AuthorizationServerConfig {
     public void accept(OAuth2AuthorizationCodeRequestAuthenticationContext authenticationContext) {
       OAuth2AuthorizationCodeRequestAuthenticationToken authorizationCodeRequestAuthentication =
         authenticationContext.getAuthentication();
-      RegisteredClient registeredClient = authenticationContext.getRegisteredClient();
-      String requestedRedirectUri = authorizationCodeRequestAuthentication.getRedirectUri();
+      var registeredClient = authenticationContext.getRegisteredClient();
+      var requestedRedirectUri = authorizationCodeRequestAuthentication.getRedirectUri();
 
       LOG.trace("Will validate the redirect uri {}", requestedRedirectUri);
 
       // Use exact string matching when comparing client redirect URIs against pre-registered URIs
       if (!registeredClient.getRedirectUris().contains(requestedRedirectUri)) {
         LOG.trace("Redirect uri is invalid!");
-        OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST);
+        var error = new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST);
         throw new OAuth2AuthorizationCodeRequestAuthenticationException(error, null);
       }
       LOG.trace("Redirect uri is OK!");
