@@ -16,14 +16,14 @@ springdoc:
   cache.disabled: true
 
   swagger-ui:
-    oauth2-redirect-url: /swagger-ui/oauth2-redirect.html
+    oauth2-redirect-url: http://localhost:8080/openapi/swagger-ui/oauth2-redirect.html
     oauth:
       clientId: writer
       clientSecret: secret-writer
       useBasicAuthenticationWithAccessCodeGrant: true
   oAuthFlow:
-    authorizationUrl: https://localhost:8443/oauth2/authorize
-    tokenUrl: https://localhost:8443/oauth2/token
+    authorizationUrl: http://localhost:8080/oauth2/authorize
+    tokenUrl: http://localhost:8080/oauth2/token
 
 server.forward-headers-strategy: framework
 
@@ -81,7 +81,7 @@ api:
         1. If no user information is found for the specified userId, a **404 - Not Found** error will be returned
 
     deleteUser:
-      description:  Deletes a user and associated profile
+      description: Deletes a user and associated profile
       notes: |
         # Normal response
         Entities for user and profile related to the specified userId will be deleted.

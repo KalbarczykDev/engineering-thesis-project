@@ -7,6 +7,7 @@ import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,7 @@ public class UserCompositeServiceImpl implements UserCompositeService {
     private final UserCompositeIntegration integration;
 
     @Override
-    public Mono<UserProfileComposite> createUser(final CreateUser body) {
+    public Mono<UserProfileComposite> createUser(final @Valid CreateUser body) {
         try {
             log.debug("createCompositeUser: creates a new composite entity for username: {}", body.username());
 

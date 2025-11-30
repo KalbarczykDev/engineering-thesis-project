@@ -63,6 +63,8 @@ public class UserCompositeIntegration {
     }
 
     public Mono<Tuple2<User, Profile>> createUserAndProfile(final CreateUser body) {
+        log.debug("Sending request to create user: {}", body);
+
         return webClient.post()
                 .uri(userServiceUrl)
                 .bodyValue(body)
@@ -170,9 +172,11 @@ public class UserCompositeIntegration {
 
             case NOT_FOUND:
                 return new NotFoundException(getErrorMessage(wcre));
-
             case UNPROCESSABLE_ENTITY:
                 return new InvalidInputException(getErrorMessage(wcre));
+
+            case BAD_REQUEST:
+                return new IllegalArgumentException(getErrorMessage(wcre));
 
             case null:
             default:

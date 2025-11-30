@@ -16,13 +16,15 @@ public class SecurityConfig {
     @Bean
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/openapi/**").permitAll()
+                        .pathMatchers("/openapi/**", "/swagger-ui.html", "/swagger-ui/**").permitAll() // include all Swagger endpoints
                         .pathMatchers("/actuator/**").permitAll()
-                        .pathMatchers(POST, "/user-composite/**").hasAuthority("SCOPE_user:write")
+                        .pathMatchers(POST, "/user-composite/**").permitAll()
+                        .pathMatchers(GET, "/user-composite/**").permitAll()
                         .pathMatchers(PUT, "/user-composite/**").hasAuthority("SCOPE_user:write")
                         .pathMatchers(DELETE, "/user-composite/**").hasAuthority("SCOPE_user:write")
-                        .pathMatchers(GET, "/user-composite/**").hasAuthority("SCOPE_user:read")
+
                         .anyExchange().authenticated())
                 .oauth2ResourceServer(server -> server.jwt(Customizer.withDefaults()));
         return http.build();
