@@ -22,18 +22,19 @@ This repository contains the software and supporting documentation developed for
 git clone https://github.com/KalbarczykDev/engineering-thesis-project.git
 cd engineering-thesis-project
 ```
-* Make sure you have Docker and Docker Compose installed on your machine.
+* Make sure you have Docker, Docker Compose and Gradle installed on your machine.
 * Build and run the application using Gradle and Docker Compose with the following command:
 ```bash
  ./gradlew build && docker compose build && docker compose up -d && docker compose logs -f
 ```
-* Access the application services via their respective endpoints as defined in the Docker Compose configuration.
+* Visit ```https://localhost:8080/openapi/swagger-ui.html``` to test the application.
 
 
 ## Troubleshooting
 * Ensure ports defined in docker-compose.yml are not in use.
 * Check logs for each service.
 * Verify database connections in the Spring Boot application.yml files.
+* Ensure you are using https and not http when accessing the services.
 * For MongoDB, ensure authentication credentials match configuration.
 
 ## Contributing

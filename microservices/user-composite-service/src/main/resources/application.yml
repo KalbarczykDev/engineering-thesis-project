@@ -11,7 +11,7 @@ spring.security.oauth2.resourceserver.jwt.issuer-uri: http://${app.auth-server}:
 springdoc:
   swagger-ui.path: /openapi/swagger-ui.html
   api-docs.path: /openapi/v3/api-docs
-  packagesToScan: dev.kalbarczyk.microservices.composite.user
+  packagesToScan: dev.kalbarczyk.usercompositeservice.services
   pathsToMatch: /**
   cache.disabled: true
 
