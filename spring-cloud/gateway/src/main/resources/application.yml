@@ -40,6 +40,26 @@ spring.cloud.gateway.server.webflux.routes:
     predicates:
       - Path=/user-composite/**
 
+  - id: user-composite-swagger-ui
+    uri: lb://user-composite
+    predicates:
+      - Path=/openapi/**
+
+  - id: oauth2-server
+    uri: lb://auth-server
+    predicates:
+      - Path=/oauth2/**
+
+  - id: oauth2-login
+    uri: lb://auth-server
+    predicates:
+      - Path=/login/**
+
+  - id: oauth2-error
+    uri: lb://auth-server
+    predicates:
+      - Path=/error/**
+
   - id: eureka-api
     uri: http://${app.eureka-server}:8761
     predicates:

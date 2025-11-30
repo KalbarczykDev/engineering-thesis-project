@@ -13,8 +13,8 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
       authorizationUrl = "${springdoc.oAuthFlow.authorizationUrl}",
       tokenUrl = "${springdoc.oAuthFlow.tokenUrl}",
       scopes = {
-        @OAuthScope(name = "product:read", description = "read scope"),
-        @OAuthScope(name = "product:write", description = "write scope")
+        @OAuthScope(name = "user:read", description = "read scope"),
+        @OAuthScope(name = "user:write", description = "write scope")
       }
     )
   )
