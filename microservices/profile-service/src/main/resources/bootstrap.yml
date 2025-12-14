@@ -1,4 +1,4 @@
-spring.application.name: user-composite
+spring.application.name: profile
 
 spring.cloud.config:
   failFast: true
@@ -10,3 +10,4 @@ spring.cloud.config:
   uri: http://config-server:8888
   username: ${CONFIG_SERVER_USR}
   password: ${CONFIG_SERVER_PWD}
+

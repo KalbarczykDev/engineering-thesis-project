@@ -1,4 +1,4 @@
-spring.application.name: user-composite
+spring.application.name: user
 
 spring.cloud.config:
   failFast: true
