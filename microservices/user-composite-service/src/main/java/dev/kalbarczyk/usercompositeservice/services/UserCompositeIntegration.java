@@ -56,12 +56,12 @@ public class UserCompositeIntegration {
 
     public UserCompositeIntegration(
             final @Qualifier("publishEventScheduler") Scheduler publishEventScheduler,
-            final WebClient.Builder webClient,
+            final WebClient webClient,
             final ObjectMapper mapper,
             final StreamBridge streamBridge
     ) {
         this.publishEventScheduler = publishEventScheduler;
-        this.webClient = webClient.build();
+        this.webClient = webClient;
         this.mapper = mapper;
         this.streamBridge = streamBridge;
     }

@@ -1,17 +1,20 @@
 package dev.kalbarczyk.usercompositeservice.services;
 
-import dev.kalbarczyk.api.composite.user.UserProfileComposite;
 import dev.kalbarczyk.api.composite.user.UserCompositeService;
+import dev.kalbarczyk.api.composite.user.UserProfileComposite;
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.core.user.CreateUser;
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
+import dev.kalbarczyk.usercompositeservice.services.tracing.ObservationUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+
+import java.util.function.Supplier;
 
 import static java.util.logging.Level.FINE;
 
@@ -22,9 +25,14 @@ import static java.util.logging.Level.FINE;
 public class UserCompositeServiceImpl implements UserCompositeService {
 
     private final UserCompositeIntegration integration;
+    private final ObservationUtil observationUtil;
 
     @Override
     public Mono<UserProfileComposite> createUser(final @Valid CreateUser body) {
+        return observationWithUserInfo(body.username(), () -> createUserInternal(body));
+    }
+
+    private Mono<UserProfileComposite> createUserInternal(final CreateUser body) {
         try {
             log.debug("createCompositeUser: creates a new composite entity for username: {}", body.username());
 
@@ -47,6 +55,10 @@ public class UserCompositeServiceImpl implements UserCompositeService {
 
     @Override
     public Mono<UserProfileComposite> getUserProfile(final Long userId) {
+        return observationWithUserInfo(userId, () -> getUserProfileInternal(userId));
+    }
+
+    private Mono<UserProfileComposite> getUserProfileInternal(final Long userId) {
 
         log.info("Will get composite user info for userId: {}", userId);
 
@@ -58,14 +70,23 @@ public class UserCompositeServiceImpl implements UserCompositeService {
 
     @Override
     public Mono<Profile> updateProfile(final Long userId, final UpdateProfile body) {
+        return observationWithUserInfo(userId, () -> updateProfileInternal(userId, body));
+    }
+
+    public Mono<Profile> updateProfileInternal(final Long userId, final UpdateProfile body) {
         log.debug("updateCompositeUser: updates profile entity for userId: {}", userId);
         var updatedProfile = integration.updateProfile(userId, body);
         log.debug("updateCompositeUser: updated profile entity for userId: {}", userId);
         return updatedProfile;
     }
 
+
     @Override
     public Mono<Void> deleteUser(final Long userId) {
+        return observationWithUserInfo(userId, () -> deleteUserInternal(userId));
+    }
+
+    public Mono<Void> deleteUserInternal(final Long userId) {
         log.debug("deleteCompositeUser: deletes composite entity for userId: {}", userId);
 
         var userDelete = integration.deleteUser(userId);
@@ -93,6 +114,26 @@ public class UserCompositeServiceImpl implements UserCompositeService {
                 profile.location(),
                 user.createdAt()
         ));
+    }
+
+
+    private <T> T observationWithUserInfo(final Long userId, final Supplier<T> supplier) {
+        return observationUtil.observe(
+                "composite observation",
+                "user info",
+                "userId",
+                String.valueOf(userId),
+                supplier);
+    }
+
+
+    private <T> T observationWithUserInfo(final String username, final Supplier<T> supplier) {
+        return observationUtil.observe(
+                "composite observation",
+                "user info",
+                "username",
+                username,
+                supplier);
     }
 
 
