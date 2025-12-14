@@ -35,8 +35,6 @@ services:
         condition: service_healthy
       auth-server:
         condition: service_healthy
-      eureka:
-        condition: service_started
   mongodb:
     image: mongo:8.0.5
     mem_limit: 512m
@@ -104,8 +102,7 @@ services:
     depends_on:
       auth-server:
         condition: service_healthy
-      eureka:
-        condition: service_started
+
 
   auth-server:
     environment:
@@ -119,9 +116,6 @@ services:
       interval: 5s
       timeout: 2s
       retries: 60
-    depends_on:
-      eureka:
-        condition: service_started
 
   config-server:
     build: spring-cloud/config-server
