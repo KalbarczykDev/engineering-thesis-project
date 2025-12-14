@@ -3,7 +3,6 @@ package dev.kalbarczyk.profileservice;
 import dev.kalbarczyk.profileservice.persistence.ProfileEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,6 +14,7 @@ import org.springframework.data.mongodb.core.index.IndexResolver;
 import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexResolver;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
+import reactor.core.publisher.Hooks;
 
 @Slf4j
 @SpringBootApplication
@@ -35,6 +35,7 @@ public class ProfileServiceApplication {
     }
 
     public static void main(String[] args) {
+        Hooks.enableAutomaticContextPropagation();
         var ctx = SpringApplication.run(ProfileServiceApplication.class, args);
         var mongodDbHost = ctx.getEnvironment().getProperty("spring.data.mongodb.host");
         var mongodDbPort = ctx.getEnvironment().getProperty("spring.data.mongodb.port");
