@@ -31,6 +31,7 @@ cd engineering-thesis-project
 
 * Make sure you have Docker, Docker Compose and Gradle installed on your machine.
 * Build and run the application using Gradle and Docker Compose with the following command:
+* Include your own data in the .env file if needed.
 
 ```bash
  ./gradlew build && docker compose build && docker compose up -d && docker compose logs -f
