@@ -6,12 +6,10 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -93,19 +91,17 @@ public class UserCompositeServiceApplication {
     public WebClient.Builder loadBalancedWebClientBuilder() {
         return WebClient.builder();
     }
-
-    @Autowired
-    private ReactorLoadBalancerExchangeFilterFunction lbFunction;
+    
 
     @Bean
     public WebClient webClient(WebClient.Builder builder) {
-        return builder.filter(lbFunction).build();
+        return builder.build();
     }
 
     public static void main(String[] args) {
         Hooks.enableAutomaticContextPropagation();
         SpringApplication.run(UserCompositeServiceApplication.class, args);
     }
-    
+
 
 }

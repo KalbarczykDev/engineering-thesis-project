@@ -20,7 +20,7 @@ Spring Boot, with MySQL and MongoDB as databases, and utilizes Docker and Docker
 * Dockerized deployment for easy setup and consistent environments.
 * Monitoring of application metrics using Docker Compose.
 
-## Installation And Running
+## Installation And Running Locally
 
 * Clone this repository:
 
@@ -42,6 +42,12 @@ cd engineering-thesis-project
 * Autorize by clicking the autorize button and using the following credentials:
     * Username: u
     * Password: p
+
+* Access Eureka Dashboard at ```https://localhost:8443/eureka/web```
+* Access Zipkin at ```https://localhost:8443/eureka/web```
+* Access RABITMQ Management at ```http://localhost:15672/#/```
+    * Username: guest
+    * Password: guest
 
 ## Troubleshooting
 
