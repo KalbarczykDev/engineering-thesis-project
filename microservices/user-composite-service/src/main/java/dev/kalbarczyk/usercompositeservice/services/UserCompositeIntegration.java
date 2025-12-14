@@ -8,11 +8,16 @@ import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.event.Event;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
+import dev.kalbarczyk.api.exceptions.ServiceUnavailableException;
+import dev.kalbarczyk.util.http.HttpErrorInfo;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.function.StreamBridge;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -21,7 +26,6 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
-import dev.kalbarczyk.util.http.HttpErrorInfo;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
@@ -91,6 +95,9 @@ public class UserCompositeIntegration {
                 .subscribeOn(publishEventScheduler);
     }
 
+    @Retry(name = "user")
+    @TimeLimiter(name = "user")
+    @CircuitBreaker(name = "user", fallbackMethod = "getUserFallbackValue")
     public Mono<User> getUser(final Long userId) {
         var url = userServiceUrl + "/" + userId;
         log.debug("Will get a user from URL: {}", url);
@@ -99,6 +106,13 @@ public class UserCompositeIntegration {
                 .onErrorMap(WebClientResponseException.class, this::handleException);
     }
 
+    private Mono<User> getUserFallbackValue(final Long userId, final CallNotPermittedException ex) {
+        return throwServiceUnavailable("user", userId);
+    }
+
+    @Retry(name = "profile")
+    @TimeLimiter(name = "profile")
+    @CircuitBreaker(name = "profile", fallbackMethod = "getProfileFallbackValue")
     public Mono<Profile> getProfile(final Long userId) {
         var url = profileServiceUrl + "/" + userId;
         log.debug("Will get a profile from URL: {}", url);
@@ -107,7 +121,14 @@ public class UserCompositeIntegration {
                 .onErrorMap(WebClientResponseException.class, this::handleException);
     }
 
+    private Mono<Profile> getProfileFallbackValue(final Long userId, final CallNotPermittedException ex) {
+        return throwServiceUnavailable("profile", userId);
+    }
 
+
+    @Retry(name = "profile-update")
+    @TimeLimiter(name = "profile-update")
+    @CircuitBreaker(name = "profile-update", fallbackMethod = "updateProfileFallbackValue")
     public Mono<Profile> updateProfile(final Long userId, final UpdateProfile body) {
         var url = profileServiceUrl + "/" + userId;
         log.debug("Will update a profile on URL: {}", url);
@@ -117,6 +138,13 @@ public class UserCompositeIntegration {
                 .bodyToMono(Profile.class)
                 .log(log.getName(), FINE)
                 .onErrorMap(WebClientResponseException.class, this::handleException);
+    }
+
+    private Mono<Profile> updateProfileFallbackValue(
+            final Long userId,
+            final UpdateProfile body,
+            final CallNotPermittedException ex) {
+        return throwServiceUnavailable("profile-update", userId);
     }
 
 
@@ -132,6 +160,16 @@ public class UserCompositeIntegration {
         return Mono.fromRunnable(() -> sendMessage("profiles-out-0", new Event<>(Event.Type.DELETE, userId, null)))
                 .subscribeOn(publishEventScheduler)
                 .then();
+    }
+
+    private <T> Mono<T> throwServiceUnavailable(final String serviceName, final Long userId) {
+        var errorMessage = String.format(
+                "Circuit Breaker is OPEN for the %s service. Failed to retrieve resource with ID: %d. Returning 503 SERVICE UNAVAILABLE.",
+                serviceName,
+                userId
+        );
+        log.warn("Resilience Fallback: {}", errorMessage);
+        throw new ServiceUnavailableException(errorMessage);
     }
 
 
