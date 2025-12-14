@@ -1,9 +1,9 @@
 package dev.kalbarczyk.util.http;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
-
+import dev.kalbarczyk.api.exceptions.BadRequestException;
+import dev.kalbarczyk.api.exceptions.InvalidInputException;
+import dev.kalbarczyk.api.exceptions.NotFoundException;
+import dev.kalbarczyk.api.exceptions.ServiceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import dev.kalbarczyk.api.exceptions.BadRequestException;
-import dev.kalbarczyk.api.exceptions.InvalidInputException;
-import dev.kalbarczyk.api.exceptions.NotFoundException;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 class GlobalControllerExceptionHandler {
@@ -43,6 +42,14 @@ class GlobalControllerExceptionHandler {
             final ServerHttpRequest request, final InvalidInputException ex) {
 
         return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
+    }
+
+    @ResponseStatus(SERVICE_UNAVAILABLE)
+    @ExceptionHandler(ServiceUnavailableException.class)
+    public @ResponseBody HttpErrorInfo handleServiceUnavailableException(
+            final ServerHttpRequest request, final ServiceUnavailableException ex) {
+
+        return createHttpErrorInfo(SERVICE_UNAVAILABLE, request, ex);
     }
 
     private HttpErrorInfo createHttpErrorInfo(
