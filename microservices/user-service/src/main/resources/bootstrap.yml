@@ -1,5 +1,8 @@
 spring.application.name: user
 
+logging.pattern.correlation: "[${spring.application.name:},%X{traceId:-},%X{spanId:-}] "
+logging.include-application-name: false
+
 spring.cloud.config:
   failFast: true
   retry:
