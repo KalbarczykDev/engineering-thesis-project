@@ -14,7 +14,7 @@ public interface ExerciseService {
      * @param exercise A JSON representation of the new exercise
      * @return A JSON representation of the newly created exercise
      */
-    @PutMapping(
+    @PostMapping(
             value = "/exercises",
             consumes = "application/json",
             produces = "application/json"
