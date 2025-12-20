@@ -1,21 +1,12 @@
 package dev.kalbarczyk.userservice.persistence;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Table;
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Builder
-
 public class UserEntity {
 
     @Id
@@ -36,12 +27,100 @@ public class UserEntity {
     private String password;
 
     @Column(nullable = false, updatable = false)
-    @Setter(AccessLevel.NONE)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    @Setter(AccessLevel.NONE)
     private LocalDateTime updatedAt;
+
+    public UserEntity() {
+    }
+
+    public UserEntity(Long id, Long version, String username, String slug, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.version = version;
+        this.username = username;
+        this.slug = slug;
+        this.email = email;
+        this.password = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(version, that.version) && Objects.equals(username, that.username) && Objects.equals(slug, that.slug) && Objects.equals(email, that.email) && Objects.equals(password, that.password) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, version, username, slug, email, password, createdAt, updatedAt);
+    }
 
     @Override
     public String toString() {

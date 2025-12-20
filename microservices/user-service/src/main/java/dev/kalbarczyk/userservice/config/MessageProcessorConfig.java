@@ -5,18 +5,22 @@ import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.core.user.UserService;
 import dev.kalbarczyk.api.event.Event;
 import dev.kalbarczyk.api.exceptions.EventProcessingException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.function.Consumer;
 
-@Slf4j
-@RequiredArgsConstructor
 @Configuration
 public class MessageProcessorConfig {
+    private final static Logger log = LoggerFactory.getLogger(MessageProcessorConfig.class);
+
     private final UserService userService;
+
+    public MessageProcessorConfig(UserService userService) {
+        this.userService = userService;
+    }
 
     @Bean
     public Consumer<Event<Long, User>> messageProcessor() {

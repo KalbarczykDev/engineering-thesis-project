@@ -2,28 +2,37 @@ package dev.kalbarczyk.userservice.service;
 
 import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.userservice.persistence.UserEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import dev.kalbarczyk.util.DateTimeUtil;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+@Component
+public class UserMapper {
 
-@Mapper(componentModel = "spring")
-public interface UserMapper {
-    @Mappings(
-            {
-                    @Mapping(target = "userId", source = "id")
-            }
-    )
-    User entityToApi(final UserEntity entity);
+    public User entityToApi(UserEntity entity) {
+        if (entity == null) return null;
 
-    @Mappings({
-            @Mapping(target = "id", source = "userId"),
-            @Mapping(target = "version", ignore = true)
-    })
-    UserEntity apiToEntity(final User api);
+        return new User(
+                entity.getId(),
+                entity.getUsername(),
+                entity.getSlug(),
+                entity.getEmail(),
+                entity.getPassword(),
+                DateTimeUtil.toString(entity.getCreatedAt()),
+                DateTimeUtil.toString(entity.getUpdatedAt())
+        );
+    }
 
-    List<User> entityListToApiList(final List<UserEntity> entity);
+    public UserEntity apiToEntity(User api) {
+        if (api == null) return null;
 
-    List<UserEntity> apiListToEntityList(final List<User> api);
+        var entity = new UserEntity();
+        entity.setId(api.userId());
+        entity.setUsername(api.username());
+        entity.setSlug(api.slug());
+        entity.setEmail(api.email());
+        entity.setPassword(api.password());
+        entity.setCreatedAt(DateTimeUtil.toLocalDateTime(api.createdAt()));
+        entity.setUpdatedAt(DateTimeUtil.toLocalDateTime(api.updatedAt()));
+        return entity;
+    }
 }

@@ -9,22 +9,26 @@ import dev.kalbarczyk.userservice.persistence.UserEntity;
 import dev.kalbarczyk.userservice.persistence.UserRepository;
 import dev.kalbarczyk.util.SlugUtil;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 
 @RestController
-@RequiredArgsConstructor
-@Slf4j
 public class UserServiceImpl implements UserService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository repository;
 
     private final UserMapper mapper;
 
+    public UserServiceImpl(UserRepository repository, UserMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     @Override
     public Mono<User> createUser(final @Valid CreateUser body) {
@@ -36,13 +40,12 @@ public class UserServiceImpl implements UserService {
                                 if (u.getUsername().equals(body.username()))
                                     throw new InvalidInputException("Username already in use: " + body.username());
                             });
-
-                    return UserEntity.builder()
-                            .username(body.username())
-                            .slug(SlugUtil.toSlug(body.username()))
-                            .email(body.email())
-                            .password(body.password())
-                            .build();
+                    var newUser = new UserEntity();
+                    newUser.setUsername(body.username());
+                    newUser.setSlug(SlugUtil.toSlug(body.username()));
+                    newUser.setEmail(body.email());
+                    newUser.setPassword(body.password());
+                    return newUser;
                 })
                 .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(newEntity ->
