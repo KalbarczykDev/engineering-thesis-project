@@ -6,12 +6,9 @@ import dev.kalbarczyk.exerciseservice.persistence.ExerciseEntity;
 import dev.kalbarczyk.util.DateTimeUtil;
 import org.springframework.stereotype.Component;
 
-import java.time.format.DateTimeFormatter;
 
 @Component
 public class ExerciseMapper {
-
-    private static final DateTimeFormatter ISO = DateTimeFormatter.ISO_DATE_TIME;
 
     public Exercise entityToApi(final ExerciseEntity entity) {
         if (entity == null) return null;
