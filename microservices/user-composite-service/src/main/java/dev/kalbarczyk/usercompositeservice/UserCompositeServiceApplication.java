@@ -5,7 +5,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,10 +18,11 @@ import reactor.core.publisher.Hooks;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
-@Slf4j
 @SpringBootApplication
 @ComponentScan("dev.kalbarczyk")
 public class UserCompositeServiceApplication {
+
+    private static final Logger log = LoggerFactory.getLogger(UserCompositeServiceApplication.class);
 
     @Value("${api.common.version}")
     String apiVersion;
@@ -91,7 +93,7 @@ public class UserCompositeServiceApplication {
     public WebClient.Builder loadBalancedWebClientBuilder() {
         return WebClient.builder();
     }
-    
+
 
     @Bean
     public WebClient webClient(WebClient.Builder builder) {

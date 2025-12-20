@@ -4,9 +4,11 @@ package dev.kalbarczyk.exerciseservice.services;
 import dev.kalbarczyk.api.core.exercise.Exercise;
 import dev.kalbarczyk.exerciseservice.persistence.ExerciseEntity;
 import dev.kalbarczyk.util.DateTimeUtil;
+import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
 
+@Component
 public class ExerciseMapper {
 
     private static final DateTimeFormatter ISO = DateTimeFormatter.ISO_DATE_TIME;

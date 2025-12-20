@@ -1,7 +1,6 @@
 package dev.kalbarczyk.usercompositeservice.config;
 
 import dev.kalbarczyk.usercompositeservice.services.UserCompositeIntegration;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.health.CompositeReactiveHealthContributor;
 import org.springframework.boot.actuate.health.ReactiveHealthContributor;
 import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
@@ -11,9 +10,12 @@ import org.springframework.context.annotation.Configuration;
 import java.util.LinkedHashMap;
 
 @Configuration
-@RequiredArgsConstructor
 public class HealthCheckConfiguration {
     private final UserCompositeIntegration userCompositeIntegration;
+
+    public HealthCheckConfiguration(UserCompositeIntegration userCompositeIntegration) {
+        this.userCompositeIntegration = userCompositeIntegration;
+    }
 
     @Bean
     ReactiveHealthContributor coreServices() {

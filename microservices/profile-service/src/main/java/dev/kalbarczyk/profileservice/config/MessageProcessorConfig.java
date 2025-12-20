@@ -5,20 +5,24 @@ import dev.kalbarczyk.api.core.profile.ProfileService;
 import dev.kalbarczyk.api.core.profile.UpdateProfile;
 import dev.kalbarczyk.api.event.Event;
 import dev.kalbarczyk.api.exceptions.EventProcessingException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.function.Consumer;
 
-@Slf4j
-@RequiredArgsConstructor
+
 @Configuration
 public class MessageProcessorConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(MessageProcessorConfig.class);
+
     private final ProfileService profileService;
 
+    public MessageProcessorConfig(ProfileService profileService) {
+        this.profileService = profileService;
+    }
 
     @Bean
     public Consumer<Event<Long, Profile>> messageProcessor() {

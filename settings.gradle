@@ -7,12 +7,11 @@ pluginManagement {
 include ':api'
 include ':util'
 
+//include ':microservices:workout-service'
 include ':microservices:exercise-service'
 include ':microservices:user-composite-service'
 include ':microservices:user-service'
 include ':microservices:profile-service'
-include ':microservices:workout-service'
-include ':spring-cloud:eureka-server'
 include ':spring-cloud:gateway'
 include ':spring-cloud:authorization-server'
 include ':spring-cloud:config-server'

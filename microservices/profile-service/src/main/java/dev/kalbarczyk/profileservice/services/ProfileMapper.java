@@ -2,29 +2,35 @@ package dev.kalbarczyk.profileservice.services;
 
 import dev.kalbarczyk.api.core.profile.Profile;
 import dev.kalbarczyk.profileservice.persistence.ProfileEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import dev.kalbarczyk.util.DateTimeUtil;
+import org.springframework.stereotype.Component;
 
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+@Component
+public class ProfileMapper {
 
-@Mapper(componentModel = "spring")
-public interface ProfileMapper {
+    public Profile entityToApi(final ProfileEntity entity) {
+        if (entity == null) return null;
 
-    DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        return new Profile(
+                entity.getUserId(),
+                entity.getDisplayName(),
+                entity.getBio(),
+                entity.getLocation(),
+                DateTimeUtil.toString(entity.getCreatedAt()),
+                DateTimeUtil.toString(entity.getUpdatedAt())
+        );
+    }
 
-    @Mapping(target = "createdAt",
-            expression = "java(entity.getCreatedAt() != null ? entity.getCreatedAt().format(FORMATTER) : null)")
-    @Mapping(target = "updatedAt",
-            expression = "java(entity.getUpdatedAt() != null ? entity.getUpdatedAt().format(FORMATTER) : null)")
-    Profile entityToApi(ProfileEntity entity);
+    public ProfileEntity apiToEntity(Profile api) {
+        if (api == null) return null;
 
-    @Mapping(target = "createdAt", expression = "java(api.createdAt() != null ? java.time.LocalDateTime.parse(api.createdAt()) : null)")
-    @Mapping(target = "updatedAt", expression = "java(api.updatedAt() != null ? java.time.LocalDateTime.parse(api.updatedAt()) : null)")
-    @Mapping(target = "version", ignore = true)
-    ProfileEntity apiToEntity(Profile api);
-
-    List<Profile> entityToApi(List<ProfileEntity> entities);
-
-    List<ProfileEntity> apiToEntity(List<Profile> entities);
+        ProfileEntity entity = new ProfileEntity();
+        entity.setUserId(api.userId());
+        entity.setDisplayName(api.displayName());
+        entity.setBio(api.bio());
+        entity.setLocation(api.location());
+        entity.setCreatedAt(DateTimeUtil.toLocalDateTime(api.createdAt()));
+        entity.setUpdatedAt(DateTimeUtil.toLocalDateTime(api.updatedAt()));
+        return entity;
+    }
 }

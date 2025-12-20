@@ -1,8 +1,8 @@
 package dev.kalbarczyk.profileservice;
 
 import dev.kalbarczyk.profileservice.persistence.ProfileEntity;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,13 +16,18 @@ import org.springframework.data.mongodb.core.mapping.MongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
 import reactor.core.publisher.Hooks;
 
-@Slf4j
+
 @SpringBootApplication
-@RequiredArgsConstructor
 @ComponentScan("dev.kalbarczyk")
 public class ProfileServiceApplication {
 
+    private static final Logger log = LoggerFactory.getLogger(ProfileServiceApplication.class);
+
     private final ReactiveMongoOperations mongoTemplate;
+
+    public ProfileServiceApplication(ReactiveMongoOperations mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @EventListener(ContextRefreshedEvent.class)
     public void initIndicesAfterStartup() {

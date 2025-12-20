@@ -14,7 +14,8 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -39,8 +40,9 @@ import java.util.logging.Level;
 import static java.util.logging.Level.FINE;
 
 @Component
-@Slf4j
 public class UserCompositeIntegration {
+
+    private static final Logger log = LoggerFactory.getLogger(UserCompositeIntegration.class);
 
     private final SecurityContext nullSecCtx = new SecurityContextImpl();
 

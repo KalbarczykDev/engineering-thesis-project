@@ -7,8 +7,8 @@ import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 import dev.kalbarczyk.profileservice.persistence.ProfileRepository;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -17,13 +17,17 @@ import static java.util.logging.Level.FINE;
 
 
 @RestController
-@RequiredArgsConstructor
-@Slf4j
 public class ProfileServiceImpl implements ProfileService {
+
+    private static final Logger log = LoggerFactory.getLogger(ProfileServiceImpl.class);
 
     private final ProfileRepository repository;
     private final ProfileMapper mapper;
 
+    public ProfileServiceImpl(ProfileRepository repository, ProfileMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     @Override
     public Mono<Profile> createProfile(final @Valid Profile profile) {

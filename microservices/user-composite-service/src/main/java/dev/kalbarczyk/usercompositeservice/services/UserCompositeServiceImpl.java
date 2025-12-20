@@ -9,8 +9,8 @@ import dev.kalbarczyk.api.core.user.User;
 import dev.kalbarczyk.api.exceptions.InvalidInputException;
 import dev.kalbarczyk.usercompositeservice.services.tracing.ObservationUtil;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -20,12 +20,17 @@ import static java.util.logging.Level.FINE;
 
 
 @RestController
-@RequiredArgsConstructor
-@Slf4j
 public class UserCompositeServiceImpl implements UserCompositeService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserCompositeServiceImpl.class);
 
     private final UserCompositeIntegration integration;
     private final ObservationUtil observationUtil;
+
+    public UserCompositeServiceImpl(UserCompositeIntegration integration, ObservationUtil observationUtil) {
+        this.integration = integration;
+        this.observationUtil = observationUtil;
+    }
 
     @Override
     public Mono<UserProfileComposite> createUser(final @Valid CreateUser body) {
