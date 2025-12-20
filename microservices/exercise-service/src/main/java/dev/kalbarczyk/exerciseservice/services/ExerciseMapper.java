@@ -13,10 +13,7 @@ public class ExerciseMapper {
 
     private static final DateTimeFormatter ISO = DateTimeFormatter.ISO_DATE_TIME;
 
-    private ExerciseMapper() {
-    }
-
-    public static Exercise entityToApi(final ExerciseEntity entity) {
+    public Exercise entityToApi(final ExerciseEntity entity) {
         if (entity == null) return null;
 
         return new Exercise(
@@ -30,7 +27,7 @@ public class ExerciseMapper {
         );
     }
 
-    public static ExerciseEntity apiToEntity(final Exercise api) {
+    public ExerciseEntity apiToEntity(final Exercise api) {
         if (api == null) return null;
 
         var entity = new ExerciseEntity();
