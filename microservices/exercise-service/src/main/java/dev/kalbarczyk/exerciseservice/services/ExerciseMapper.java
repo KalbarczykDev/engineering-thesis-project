@@ -3,15 +3,18 @@ package dev.kalbarczyk.exerciseservice.services;
 
 import dev.kalbarczyk.api.core.exercise.Exercise;
 import dev.kalbarczyk.exerciseservice.persistence.ExerciseEntity;
+import dev.kalbarczyk.util.DateTimeUtil;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ExerciseMapper {
 
     private static final DateTimeFormatter ISO = DateTimeFormatter.ISO_DATE_TIME;
 
-    public static Exercise entityToApi(ExerciseEntity entity) {
+    private ExerciseMapper() {
+    }
+
+    public static Exercise entityToApi(final ExerciseEntity entity) {
         if (entity == null) return null;
 
         return new Exercise(
@@ -20,30 +23,23 @@ public class ExerciseMapper {
                 entity.getType(),
                 entity.getMuscleGroup(),
                 entity.getInstructions(),
-                toString(entity.getCreatedAt()),
-                toString(entity.getUpdatedAt())
+                DateTimeUtil.toString(entity.getCreatedAt()),
+                DateTimeUtil.toString(entity.getUpdatedAt())
         );
     }
 
-    public static ExerciseEntity apiToEntity(Exercise api) {
+    public static ExerciseEntity apiToEntity(final Exercise api) {
         if (api == null) return null;
 
-        ExerciseEntity entity = new ExerciseEntity();
+        var entity = new ExerciseEntity();
         entity.setId(api.id());
         entity.setName(api.name());
         entity.setType(api.type());
         entity.setMuscleGroup(api.muscleGroup());
         entity.setInstructions(api.instructions());
-        entity.setCreatedAt(toLocalDateTime(api.createdAt()));
-        entity.setUpdatedAt(toLocalDateTime(api.updatedAt()));
+        entity.setCreatedAt(DateTimeUtil.toLocalDateTime(api.createdAt()));
+        entity.setUpdatedAt(DateTimeUtil.toLocalDateTime(api.updatedAt()));
         return entity;
     }
 
-    private static String toString(LocalDateTime time) {
-        return time == null ? null : time.format(ISO);
-    }
-
-    private static LocalDateTime toLocalDateTime(String time) {
-        return time == null ? null : LocalDateTime.parse(time, ISO);
-    }
 }
