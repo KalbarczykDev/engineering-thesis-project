@@ -1,8 +1,8 @@
 package dev.kalbarczyk.exerciseservice;
 
 import dev.kalbarczyk.exerciseservice.persistence.ExerciseEntity;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,13 +12,17 @@ import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexResolver;
 import reactor.core.publisher.Hooks;
 
-@Slf4j
 @SpringBootApplication
-@RequiredArgsConstructor
 @ComponentScan("dev.kalbarczyk")
 public class ExerciseServiceApplication {
 
+    private static final Logger log = LoggerFactory.getLogger(ExerciseServiceApplication.class);
+
     private final ReactiveMongoOperations mongoTemplate;
+
+    public ExerciseServiceApplication(ReactiveMongoOperations mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @EventListener(ContextRefreshedEvent.class)
     public void initIndicesAfterStartup() {
