@@ -15,6 +15,17 @@ spring.ssl.bundle.jks.gateway:
 
 server.ssl.bundle: gateway
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: user-composite
+        url: /user-composite/v3/api-docs
+      - name: exercise
+        url: /exercise/v3/api-docs
+      - name: auth-server
+        url: /oauth2/v3/api-docs
+
 spring.cloud.gateway.server.webflux.routes:
 
   - id: user-composite
@@ -25,7 +36,21 @@ spring.cloud.gateway.server.webflux.routes:
   - id: user-composite-swagger-ui
     uri: lb://user-composite
     predicates:
-      - Path=/openapi/**
+      - Path=/user-composite/v3/api-docs
+    filters:
+      - StripPrefix=1
+
+  - id: exercise
+    uri: lb://exercise
+    predicates:
+      - Path=/exercise/**
+
+  - id: exercise-swagger-ui
+    uri: lb://exercise
+    predicates:
+      - Path=/exercise/v3/api-docs
+    filters:
+      - StripPrefix=1
 
   - id: oauth2-server
     uri: lb://auth-server

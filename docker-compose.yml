@@ -23,6 +23,20 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+
+  exercise:
+    build: microservices/exercise-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
+      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      auth-server:
+        condition: service_healthy
+
   user-composite:
     build: microservices/user-composite-service
     mem_limit: 512m

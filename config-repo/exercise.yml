@@ -1,6 +1,58 @@
 server.port: 8080
 server.error.include-message: always
 
+
+api:
+  common:
+    version: 1.0.0
+    title: User Composite Service API
+    description: API for the User Composite Service
+    termsOfService: example.com/terms
+    license: Example License
+    licenseUrl: example.com/license
+    externalDocDesc: Example External Docs
+    externalDocUrl: example.com/repository
+    contact:
+      name: Oskar Kalbarczyk
+      url: https://kalbarczyk.dev
+      email: example@email.com
+
+  responseCodes:
+    ok.description: OK
+    badRequest.description: Bad Request, invalid format of the request. See response message for more information
+    notFound.description: Not found, the specified id does not exist
+    unprocessableEntity.description: Unprocessable entity, input parameters caused the processing to fail. See response message for more information
+
+  exercise:
+    getExercise:
+      description: Gets the exercise information.
+      notes: |
+        # Normal response
+        If the requested exerciseId is found the method will return information regarding:
+        1. Exercise
+
+        # Expected partial and error responses
+        1. If no exercise information is found, a **404 - Not Found** error will be returned
+
+    createExercise:
+      description: Creates a new exercise
+      notes: |
+        # Normal response
+        The createExercise information posted to the API will be stored as a new exercise entity.
+
+        # Expected error responses
+        1. If an exercise with the same name as specified in the posted information already exists,
+           an **422 - Unprocessable Entity** error with a "duplicate key" error message will be returned
+
+    deleteExercise:
+      description: Deletes an exercise
+      notes: |
+        # Normal response
+        The exercise related to the specified exerciseId will be deleted.
+    
+
+
+
 spring.data.mongodb:
   host: mongodb
   port: 27017
