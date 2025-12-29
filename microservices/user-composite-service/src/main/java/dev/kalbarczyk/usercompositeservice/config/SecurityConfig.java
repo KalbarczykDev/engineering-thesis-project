@@ -1,13 +1,13 @@
 package dev.kalbarczyk.usercompositeservice.config;
 
-import static org.springframework.http.HttpMethod.*;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -18,7 +18,7 @@ public class SecurityConfig {
         http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/openapi/**", "/swagger-ui.html", "/swagger-ui/**").permitAll() // include all Swagger endpoints
+                        .pathMatchers("/openapi/**", "/v3/api-docs/**", "/webjars/**").permitAll()
                         .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers(POST, "/user-composite/**").permitAll()
                         .pathMatchers(GET, "/user-composite/**").permitAll()

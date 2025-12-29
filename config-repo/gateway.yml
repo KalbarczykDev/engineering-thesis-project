@@ -22,35 +22,35 @@ springdoc:
       - name: user-composite
         url: /user-composite/v3/api-docs
       - name: exercise
-        url: /exercise/v3/api-docs
+        url: /exercise/openapi/v3/api-docs
       - name: auth-server
-        url: /oauth2/v3/api-docs
+        url: /oauth2/openapi/v3/api-docs
 
 spring.cloud.gateway.server.webflux.routes:
 
-  - id: user-composite
-    uri: lb://user-composite
-    predicates:
-      - Path=/user-composite/**
-
   - id: user-composite-swagger-ui
-    uri: lb://user-composite
+    uri: lb://USER-COMPOSITE
     predicates:
-      - Path=/user-composite/v3/api-docs
+      - Path=/user-composite/openapi/**
     filters:
       - StripPrefix=1
+
+  - id: user-composite
+    uri: lb://USER-COMPOSITE
+    predicates:
+      - Path=/user-composite/**
+    filters:
+      - StripPrefix=1
+
+
 
   - id: exercise
     uri: lb://exercise
     predicates:
       - Path=/exercise/**
-
-  - id: exercise-swagger-ui
-    uri: lb://exercise
-    predicates:
-      - Path=/exercise/v3/api-docs
     filters:
       - StripPrefix=1
+
 
   - id: oauth2-server
     uri: lb://auth-server
