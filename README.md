@@ -37,14 +37,22 @@ cd engineering-thesis-project
  ./gradlew build && docker compose build && docker compose up -d && docker compose logs -f
 ```
 
-* Visit ```https://localhost:8443/openapi/swagger-ui.html``` to test the application.
+* Visit swagger endpoints to test user facing microservices:
+    * User Composite Service:
+        * ```https://localhost:8443/user-composite/openapi/swagger-ui/index.html```
+    * Exercise Service
+        * ```https://localhost:8443/exercise/openapi/swagger-ui/index.html```
+    * Workout Service
+        * ```https://localhost:8443/workout/openapi/swagger-ui/index.html```
 
-* Autorize by clicking the autorize button and using the following credentials:
+* Authorize by clicking the authorize button and using the following credentials:
     * Username: u
     * Password: p
 
 * Access Eureka Dashboard at ```https://localhost:8443/eureka/web```
-* Access Zipkin at ```https://localhost:8443/eureka/web```
+    * Username: u
+    * Password: p
+* Access Zipkin at ```http://localhost:9411/zipkin/```
 * Access RABITMQ Management at ```http://localhost:15672/#/```
     * Username: guest
     * Password: guest
