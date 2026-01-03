@@ -19,8 +19,7 @@ import static java.util.logging.Level.FINE;
 
 @RestController
 public class ExerciseServiceImpl implements ExerciseService {
-
-    //logger
+    
     private static final Logger log = LoggerFactory.getLogger(ExerciseServiceImpl.class);
 
     private final ExerciseRepository repository;

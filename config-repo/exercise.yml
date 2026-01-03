@@ -1,7 +1,7 @@
 springdoc:
   swagger-ui.path: /openapi/swagger-ui.html
   api-docs.path: /openapi/v3/api-docs
-  packagesToScan: dev.kalbarczyk.exercise.services
+  packagesToScan: dev.kalbarczyk.exerciseservice.services
   pathsToMatch: /**
   cache.disabled: true
 
@@ -39,6 +39,12 @@ api:
     unprocessableEntity.description: Unprocessable entity, input parameters caused the processing to fail. See response message for more information
 
   exercise:
+    getExercises:
+      description: Gets a list of exercises
+      notes: |
+        # Normal response
+        A list of all exercises will be returned. If no exercises are found an empty list will be returned.
+
     getExercise:
       description: Gets the exercise information.
       notes: |
