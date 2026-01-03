@@ -21,9 +21,12 @@ public class SecurityConfig {
                         .pathMatchers("/openapi/**", "/swagger-ui.html", "/swagger-ui/**").permitAll() // include all Swagger endpoints
                         .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers(GET, "/exercises/**").permitAll()
-                        .pathMatchers(POST, "/exercises/**").hasAuthority("SCOPE_user:write")
-                        .pathMatchers(PUT, "/exercises/**").hasAuthority("SCOPE_user:write")
-                        .pathMatchers(DELETE, "/exercises/**").hasAuthority("SCOPE_user:write")
+                        .pathMatchers(POST, "/exercises/**").permitAll()
+                        .pathMatchers(PUT, "/exercises/**").permitAll()
+                        .pathMatchers(DELETE, "/exercises/**").permitAll()
+//                        .pathMatchers(POST, "/exercises/**").hasAuthority("SCOPE_user:write")
+//                        .pathMatchers(PUT, "/exercises/**").hasAuthority("SCOPE_user:write")
+//                        .pathMatchers(DELETE, "/exercises/**").hasAuthority("SCOPE_user:write")
 
                         .anyExchange().authenticated())
                 .oauth2ResourceServer(server -> server.jwt(Customizer.withDefaults()));
