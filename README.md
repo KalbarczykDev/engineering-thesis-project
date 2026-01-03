@@ -41,9 +41,9 @@ cd engineering-thesis-project
     * User Composite Service:
         * ```https://localhost:8443/user-composite/openapi/swagger-ui/index.html```
     * Exercise Service
-        * ```https://localhost:8443/exercise/openapi/swagger-ui/index.html```
+        * ```https://localhost:8443/exercises/openapi/swagger-ui/index.html```
     * Workout Service
-        * ```https://localhost:8443/workout/openapi/swagger-ui/index.html```
+        * ```https://localhost:8443/workouts/openapi/swagger-ui/index.html```
 
 * Authorize by clicking the authorize button and using the following credentials:
     * Username: u

@@ -1,12 +1,12 @@
 springdoc:
   swagger-ui.path: /openapi/swagger-ui.html
   api-docs.path: /openapi/v3/api-docs
-  packagesToScan: dev.kalbarczyk.usercompositeservice.services
+  packagesToScan: dev.kalbarczyk.exercise.services
   pathsToMatch: /**
   cache.disabled: true
 
   swagger-ui:
-    oauth2-redirect-url: https://localhost:8443/openapi/swagger-ui/oauth2-redirect.html
+    oauth2-redirect-url: https://localhost:8443/exercises/openapi/swagger-ui/oauth2-redirect.html
     oauth:
       clientId: writer
       clientSecret: secret-writer
@@ -20,8 +20,8 @@ server.forward-headers-strategy: framework
 api:
   common:
     version: 1.0.0
-    title: User Composite Service API
-    description: API for the User Composite Service
+    title: Exercise Service API
+    description: API for the Exercise Service
     termsOfService: example.com/terms
     license: Example License
     licenseUrl: example.com/license
