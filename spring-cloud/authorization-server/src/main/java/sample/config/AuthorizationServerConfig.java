@@ -119,8 +119,6 @@ public class AuthorizationServerConfig {
                 .scope(OidcScopes.OPENID)
                 .scope("user:read")
                 .scope("user:write")
-                .scope("exercise:read")
-                .scope("exercise:write")
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofHours(1)).build())
                 .build();
@@ -139,7 +137,6 @@ public class AuthorizationServerConfig {
                 .redirectUri("https://localhost:8443/swagger-ui/oauth2-redirect.html")
                 .scope(OidcScopes.OPENID)
                 .scope("user:read")
-                .scope("exercise:read")
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofHours(1)).build())
                 .build();

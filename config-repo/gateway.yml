@@ -55,6 +55,7 @@ spring.cloud.gateway.server.webflux.routes:
       - Path=/exercises/**
     filters:
       - StripPrefix=1
+      - TokenRelay=
 
 
   - id: oauth2-server

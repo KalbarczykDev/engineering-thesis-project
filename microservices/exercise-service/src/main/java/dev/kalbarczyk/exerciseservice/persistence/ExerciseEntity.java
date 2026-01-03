@@ -12,7 +12,7 @@ import java.util.Objects;
 
 import static java.lang.String.format;
 
-@Document(collection = "profiles")
+@Document(collection = "exercises")
 public class ExerciseEntity {
 
     public ExerciseEntity() {
