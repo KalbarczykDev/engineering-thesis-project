@@ -2,19 +2,21 @@ package dev.kalbarczyk.api.core.workout;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.List;
+
 public record Workout(
         String id,
-        @NotBlank @Size(min = 1, max = 255)
+        Long userId,
+
+        @NotBlank @NotEmpty @Size(max = 1000)
         String name,
-        @NotBlank @Size(min = 1, max = 255)
-        String type,
-        @NotBlank @Size(min = 1, max = 255)
-        String muscleGroup,
-        @Size(max = 2000)
-        String instructions,
+
+        List<ExerciseEntry> exercises,
+
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         String createdAt,
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
