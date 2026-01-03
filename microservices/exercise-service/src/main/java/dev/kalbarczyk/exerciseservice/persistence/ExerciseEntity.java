@@ -18,7 +18,7 @@ public class ExerciseEntity {
     public ExerciseEntity() {
     }
 
-    public ExerciseEntity(Long id, Long version, String name, String type, String muscleGroup, String instructions, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ExerciseEntity(String id, Long version, String name, String type, String muscleGroup, String instructions, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.version = version;
         this.name = name;
@@ -30,7 +30,7 @@ public class ExerciseEntity {
     }
 
     @Id
-    private Long id;
+    private String id;
     @Version
     private Long version;
     private String name;
@@ -45,11 +45,11 @@ public class ExerciseEntity {
     private LocalDateTime updatedAt;
 
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

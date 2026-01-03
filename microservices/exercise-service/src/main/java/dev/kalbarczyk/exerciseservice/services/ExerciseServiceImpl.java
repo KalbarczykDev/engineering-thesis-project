@@ -19,7 +19,7 @@ import static java.util.logging.Level.FINE;
 
 @RestController
 public class ExerciseServiceImpl implements ExerciseService {
-    
+
     private static final Logger log = LoggerFactory.getLogger(ExerciseServiceImpl.class);
 
     private final ExerciseRepository repository;
@@ -44,9 +44,9 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     @Override
-    public Mono<Void> deleteExercise(final Long id) {
+    public Mono<Void> deleteExercise(final String id) {
 
-        if (id < 1) {
+        if (id == null || id.trim().isEmpty()) {
             throw new IllegalArgumentException("Invalid exercise id: " + id);
         }
 
@@ -55,10 +55,10 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     @Override
-    public Mono<Exercise> getExercise(final Long id) {
+    public Mono<Exercise> getExercise(final String id) {
         log.debug("getExercise: tries to get exercise for id {}", id);
 
-        if (id < 1) {
+        if (id == null || id.trim().isEmpty()) {
             throw new IllegalArgumentException("Invalid exercise id: " + id);
         }
 
@@ -75,7 +75,7 @@ public class ExerciseServiceImpl implements ExerciseService {
     public Mono<Exercise> updateExercise(final Exercise exercise) {
         log.debug("updateExercise: tries to get exercise for id {}", exercise.id());
 
-        if (exercise.id() < 1) {
+        if (exercise.id() == null || exercise.id().trim().isEmpty()) {
             throw new IllegalArgumentException("Invalid exercise id: " + exercise.id());
         }
 

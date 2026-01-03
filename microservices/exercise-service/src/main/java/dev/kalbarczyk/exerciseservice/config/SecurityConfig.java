@@ -21,7 +21,8 @@ public class SecurityConfig {
                         .pathMatchers("/openapi/**", "/swagger-ui.html", "/swagger-ui/**").permitAll() // include all Swagger endpoints
                         .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers(GET, "/exercises/**").permitAll()
-                        .pathMatchers(POST, "/exercises/**").hasAuthority("SCOPE_exercise:write")
+                        .pathMatchers(POST, "/exercises/**").permitAll()
+                        // .pathMatchers(POST, "/exercises/**").hasAuthority("SCOPE_exercise:write")
                         .pathMatchers(PUT, "/exercises/**").hasAuthority("SCOPE_exercise:write")
                         .pathMatchers(DELETE, "/exercises/**").hasAuthority("SCOPE_exercise:write")
 

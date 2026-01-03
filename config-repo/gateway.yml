@@ -42,7 +42,7 @@ spring.cloud.gateway.server.webflux.routes:
     filters:
       - StripPrefix=1
 
-  - id: exercise--swagger-ui
+  - id: exercise-swagger-ui
     uri: lb://EXERCISE
     predicates:
       - Path=/exercises/openapi/**

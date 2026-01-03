@@ -46,7 +46,7 @@ public interface ExerciseService {
             @ApiResponse(responseCode = "422", description = "${api.responseCodes.unprocessableEntity.description}")
     })
     @DeleteMapping(value = "/exercises")
-    Mono<Void> deleteExercise(final @RequestParam Long id);
+    Mono<Void> deleteExercise(final @RequestParam String id);
 
     /**
      * Gets the exercise for the given id.
@@ -68,7 +68,7 @@ public interface ExerciseService {
             value = "/exercises/{id}",
             produces = "application/json"
     )
-    Mono<Exercise> getExercise(final @PathVariable Long id);
+    Mono<Exercise> getExercise(final @PathVariable String id);
 
     /**
      * Updates the exercise for the given id.

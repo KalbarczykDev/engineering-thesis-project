@@ -65,17 +65,6 @@ api:
         1. If an exercise with the same name as specified in the posted information already exists,
            an **422 - Unprocessable Entity** error with a "duplicate key" error message will be returned
 
-    updateExercise:
-      description: Updates an existing exercise
-      notes: |
-        # Normal response
-        The exercise related to the specified exerciseId will be updated with the information provided in the request body.
-
-        # Expected error responses
-        1. If no exercise with the specified exerciseId exists, a **404 - Not Found** error will be returned
-        2. If an exercise with the same name as specified in the posted information already exists (excluding the current exercise),
-           an **422 - Unprocessable Entity** error with a "duplicate key" error message will be returned
-
     deleteExercise:
       description: Deletes an exercise
       notes: |

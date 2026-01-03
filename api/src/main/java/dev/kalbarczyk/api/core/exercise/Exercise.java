@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public record Exercise(
-        Long id,
+        String id,
         @NotBlank @Size(min = 1, max = 255)
         String name,
         @NotBlank @Size(min = 1, max = 255)
