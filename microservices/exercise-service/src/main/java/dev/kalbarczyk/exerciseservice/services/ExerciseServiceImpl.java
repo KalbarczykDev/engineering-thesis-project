@@ -4,6 +4,7 @@ package dev.kalbarczyk.exerciseservice.services;
 import dev.kalbarczyk.api.core.exercise.CreateExercise;
 import dev.kalbarczyk.api.core.exercise.Exercise;
 import dev.kalbarczyk.api.core.exercise.ExerciseService;
+import dev.kalbarczyk.api.core.exercise.UpdateExercise;
 import dev.kalbarczyk.api.exceptions.NotFoundException;
 import dev.kalbarczyk.exerciseservice.persistence.ExerciseEntity;
 import dev.kalbarczyk.exerciseservice.persistence.ExerciseRepository;
@@ -39,8 +40,7 @@ public class ExerciseServiceImpl implements ExerciseService {
         newExercise.setType(exercise.type());
         newExercise.setMuscleGroup(exercise.muscleGroup());
         newExercise.setInstructions(exercise.instructions());
-        return repository.save(newExercise).map(mapper::entityToApi);
-
+        return repository.save(newExercise).log(log.getName(), FINE).map(mapper::entityToApi);
     }
 
     @Override
@@ -72,14 +72,12 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     @Override
-    public Mono<Exercise> updateExercise(final Exercise exercise) {
+    public Mono<Exercise> updateExercise(final UpdateExercise exercise) {
         log.debug("updateExercise: tries to get exercise for id {}", exercise.id());
 
         if (exercise.id() == null || exercise.id().trim().isEmpty()) {
             throw new IllegalArgumentException("Invalid exercise id: " + exercise.id());
         }
-
-
         return repository.findById(exercise.id())
                 .switchIfEmpty(Mono.error(new NotFoundException("No exercise found for id: " + exercise.id())))
                 .flatMap(existingEntity -> {
@@ -94,7 +92,6 @@ public class ExerciseServiceImpl implements ExerciseService {
                         log.debug("updateExercise: modified an entity with id: {}", updated.id())
                 )
                 .log(log.getName(), FINE);
-
     }
 
     @Override

@@ -89,7 +89,7 @@ public interface ExerciseService {
             consumes = "application/json",
             produces = "application/json"
     )
-    Mono<Exercise> updateExercise(@Valid @RequestBody Exercise exercise);
+    Mono<Exercise> updateExercise(@Valid @RequestBody UpdateExercise exercise);
 
 
     /**
