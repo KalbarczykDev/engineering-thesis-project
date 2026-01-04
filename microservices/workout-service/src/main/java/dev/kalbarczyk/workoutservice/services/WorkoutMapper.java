@@ -1,7 +1,8 @@
 package dev.kalbarczyk.workoutservice.services;
 
 
-import dev.kalbarczyk.api.core.exercise.Exercise;
+import dev.kalbarczyk.api.core.exercise.CreateExercise;
+import dev.kalbarczyk.api.core.workout.CreateWorkout;
 import dev.kalbarczyk.api.core.workout.ExerciseEntry;
 import dev.kalbarczyk.api.core.workout.Series;
 import dev.kalbarczyk.api.core.workout.Workout;
@@ -53,14 +54,11 @@ public class WorkoutMapper {
     }
 
     private ExerciseEntry entryEntityToApi(final ExerciseEntryEntity entity) {
-        var exerciseDto = new Exercise(
-                entity.getExercise().getId(),
+        var exerciseDto = new CreateExercise(
                 entity.getExercise().getName(),
                 entity.getExercise().getType(),
                 entity.getExercise().getMuscleGroup(),
-                entity.getExercise().getInstructions(),
-                DateTimeUtil.toString(entity.getExercise().getCreatedAt()),
-                DateTimeUtil.toString(entity.getExercise().getUpdatedAt())
+                entity.getExercise().getInstructions()
         );
 
 
@@ -71,14 +69,28 @@ public class WorkoutMapper {
         return new ExerciseEntry(exerciseDto, seriesDtos);
     }
 
+    public WorkoutEntity createApiToEntity(final CreateWorkout api) {
+        if (api == null) return null;
+
+        var entity = new WorkoutEntity();
+        entity.setUserId(api.userId());
+        entity.setName(api.name());
+
+        if (api.exercises() != null) {
+            entity.setExercises(api.exercises().stream()
+                    .map(this::entryApiToEntity)
+                    .collect(Collectors.toList()));
+        }
+
+        return entity;
+    }
+
     private ExerciseEntryEntity entryApiToEntity(final ExerciseEntry api) {
         var entity = new ExerciseEntryEntity();
 
         var ex = api.exercise();
         var exerciseEntity = new ExerciseEntity(
-                ex.id(), null, ex.name(), ex.type(), ex.muscleGroup(), ex.instructions(),
-                DateTimeUtil.toLocalDateTime(ex.createdAt()),
-                DateTimeUtil.toLocalDateTime(ex.updatedAt())
+                null, null, ex.name(), ex.type(), ex.muscleGroup(), ex.instructions(), null, null
         );
         entity.setExercise(exerciseEntity);
 

@@ -32,7 +32,7 @@ public interface WorkoutService {
             consumes = "application/json",
             produces = "application/json"
     )
-    Mono<Workout> createWorkout(final @RequestBody Workout workout);
+    Mono<Workout> createWorkout(final @RequestBody CreateWorkout workout);
 
     /**
      * Updates an existing workout.
@@ -76,6 +76,6 @@ public interface WorkoutService {
             value = "/workouts/history/{userId}",
             produces = "application/json"
     )
-    Mono<List<Workout>> getHistory(final @PathVariable int userId);
+    Mono<List<Workout>> getHistory(final @PathVariable Long userId);
 
 }

@@ -1,11 +1,11 @@
 package dev.kalbarczyk.api.core.workout;
 
-import dev.kalbarczyk.api.core.exercise.Exercise;
+import dev.kalbarczyk.api.core.exercise.CreateExercise;
 
 import java.util.List;
 
 public record ExerciseEntry(
-        Exercise exercise,
+        CreateExercise exercise,
         List<Series> series
 ) {
 }

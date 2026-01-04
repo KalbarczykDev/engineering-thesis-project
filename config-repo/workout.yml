@@ -1,12 +1,12 @@
 springdoc:
   swagger-ui.path: /openapi/swagger-ui.html
   api-docs.path: /openapi/v3/api-docs
-  packagesToScan: dev.kalbarczyk.exerciseservice.services
+  packagesToScan: dev.kalbarczyk.workoutservice.services
   pathsToMatch: /**
   cache.disabled: true
 
   swagger-ui:
-    oauth2-redirect-url: https://localhost:8443/exercises/openapi/swagger-ui/oauth2-redirect.html
+    oauth2-redirect-url: https://localhost:8443/workouts/openapi/swagger-ui/oauth2-redirect.html
     oauth:
       clientId: writer
       clientSecret: secret-writer
@@ -20,8 +20,8 @@ server.forward-headers-strategy: framework
 api:
   common:
     version: 1.0.0
-    title: Exercise Service API
-    description: API for the Exercise Service
+    title: Workout Service API
+    description: API for the Workout Service
     termsOfService: example.com/terms
     license: Example License
     licenseUrl: example.com/license
@@ -38,38 +38,36 @@ api:
     notFound.description: Not found, the specified id does not exist
     unprocessableEntity.description: Unprocessable entity, input parameters caused the processing to fail. See response message for more information
 
-  exercise:
-    getExercises:
-      description: Gets a list of exercises
+  workout:
+    updateWorkout:
+      description: Updates an existing workout
       notes: |
         # Normal response
-        A list of all exercises will be returned. If no exercises are found an empty list will be returned.
+        If the specified workoutId is found the workout information will be updated with the information posted to the API.
+        
+        # Expected partial and error responses
+        1. If no workout with the specified workoutId is found, a **404 - Not Found** error with a "workout not found" error message will be returned.
 
-    getExercise:
-      description: Gets the exercise information.
+    getHistory:
+      description: Gets workotus for the user id.
       notes: |
         # Normal response
-        If the requested exerciseId is found the method will return information regarding:
-        1. Exercise
+        If the requested userId is found the method will return information regarding:
+        1. Workouts added by the user
 
         # Expected partial and error responses
-        1. If no exercise information is found, a **404 - Not Found** error will be returned
+        1. If no workout information is found for the specified userId, an empty list will be returned.
 
-    createExercise:
-      description: Creates a new exercise
+    createWorkout:
+      description: Creates a new workout
       notes: |
         # Normal response
-        The createExercise information posted to the API will be stored as a new exercise entity.
+        The createWorkout information posted to the API will be stored as a new workout entity.
 
         # Expected error responses
-        1. If an exercise with the same name as specified in the posted information already exists,
+        1. If an workout with the same name as specified in the posted information already exists,
            an **422 - Unprocessable Entity** error with a "duplicate key" error message will be returned
 
-    deleteExercise:
-      description: Deletes an exercise
-      notes: |
-        # Normal response
-        The exercise related to the specified exerciseId will be deleted.
 
 server.port: 8080
 server.error.include-message: always

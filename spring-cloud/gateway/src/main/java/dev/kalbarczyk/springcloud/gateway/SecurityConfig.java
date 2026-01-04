@@ -26,6 +26,7 @@ public class SecurityConfig {
                                 .pathMatchers("/config/**").permitAll()
                                 .pathMatchers("/user-composite/**").permitAll()
                                 .pathMatchers("/exercises/**").permitAll()
+                                .pathMatchers("/workouts/**").permitAll()
                                 .anyExchange().authenticated()))
                 .oauth2ResourceServer(server -> server
                         .jwt(Customizer.withDefaults()));

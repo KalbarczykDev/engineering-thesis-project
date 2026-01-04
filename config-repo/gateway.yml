@@ -57,6 +57,21 @@ spring.cloud.gateway.server.webflux.routes:
       - StripPrefix=1
       - TokenRelay=
 
+  - id: workout-swagger-ui
+    uri: lb://WORKOUT
+    predicates:
+      - Path=/workouts/openapi/**
+    filters:
+      - StripPrefix=1
+
+  - id: workout
+    uri: lb://WORKOUT
+    predicates:
+      - Path=/workouts/**
+    filters:
+      - StripPrefix=1
+      - TokenRelay=
+
 
   - id: oauth2-server
     uri: lb://auth-server

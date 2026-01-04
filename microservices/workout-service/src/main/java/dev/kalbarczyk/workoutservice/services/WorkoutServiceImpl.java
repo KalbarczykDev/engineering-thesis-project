@@ -1,5 +1,6 @@
 package dev.kalbarczyk.workoutservice.services;
 
+import dev.kalbarczyk.api.core.workout.CreateWorkout;
 import dev.kalbarczyk.api.core.workout.Workout;
 import dev.kalbarczyk.api.core.workout.WorkoutService;
 import dev.kalbarczyk.workoutservice.persistence.WorkoutRepository;
@@ -25,11 +26,12 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Override
-    public Mono<Workout> createWorkout(final Workout workout) {
+    public Mono<Workout> createWorkout(final CreateWorkout workout) {
         log.info("createWorkout: creating workout for userId {}", workout.userId());
 
-        var newEntity = mapper.apiToEntity(workout);
+        var newEntity = mapper.createApiToEntity(workout);
         newEntity.setId(null);
+
 
         return repository.save(newEntity)
                 .map(mapper::entityToApi)
@@ -54,10 +56,10 @@ public class WorkoutServiceImpl implements WorkoutService {
     }
 
     @Override
-    public Mono<List<Workout>> getHistory(final int userId) {
+    public Mono<List<Workout>> getHistory(final Long userId) {
         log.info("getHistory: fetching workouts for userId {}", userId);
 
-        return repository.findAllByUserId((long) userId)
+        return repository.findAllByUserId(userId)
                 .map(mapper::entityToApi)
                 .collectList()
                 .log(log.getName(), java.util.logging.Level.FINE);
