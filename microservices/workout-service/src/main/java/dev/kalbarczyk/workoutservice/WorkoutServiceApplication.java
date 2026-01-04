@@ -15,12 +15,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.mongodb.config.EnableReactiveMongoAuditing;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexResolver;
 import reactor.core.publisher.Hooks;
 
 @SpringBootApplication
 @ComponentScan("dev.kalbarczyk")
+@EnableReactiveMongoAuditing
 public class WorkoutServiceApplication {
 
     private static final Logger log = LoggerFactory.getLogger(WorkoutServiceApplication.class);

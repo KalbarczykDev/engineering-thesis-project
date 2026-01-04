@@ -26,18 +26,40 @@ public class WorkoutServiceImpl implements WorkoutService {
 
     @Override
     public Mono<Workout> createWorkout(final Workout workout) {
-        log.info("createWorkout: tries to create workout for userId {}", workout.userId());
+        log.info("createWorkout: creating workout for userId {}", workout.userId());
 
-        return null;
+        var newEntity = mapper.apiToEntity(workout);
+        newEntity.setId(null);
+
+        return repository.save(newEntity)
+                .map(mapper::entityToApi)
+                .log(log.getName(), java.util.logging.Level.FINE);
     }
 
     @Override
     public Mono<Workout> updateWorkout(final Workout workout) {
-        return null;
+        log.info("updateWorkout: updating workout id {}", workout.id());
+
+        return repository.findById(workout.id())
+                .switchIfEmpty(Mono.error(new dev.kalbarczyk.api.exceptions.NotFoundException("Workout not found: " + workout.id())))
+                .flatMap(existingEntity -> {
+                    var updatedData = mapper.apiToEntity(workout);
+                    existingEntity.setName(updatedData.getName());
+                    existingEntity.setExercises(updatedData.getExercises());
+                    existingEntity.setUserId(updatedData.getUserId());
+                    return repository.save(existingEntity);
+                })
+                .map(mapper::entityToApi)
+                .log(log.getName(), java.util.logging.Level.FINE);
     }
 
     @Override
     public Mono<List<Workout>> getHistory(final int userId) {
-        return null;
+        log.info("getHistory: fetching workouts for userId {}", userId);
+
+        return repository.findAllByUserId((long) userId)
+                .map(mapper::entityToApi)
+                .collectList()
+                .log(log.getName(), java.util.logging.Level.FINE);
     }
 }
