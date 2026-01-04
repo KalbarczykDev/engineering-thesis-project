@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Mono;
 
 import java.util.function.Consumer;
 
@@ -39,7 +40,10 @@ public class MessageProcessorConfig {
                 case DELETE -> {
                     var userId = event.getKey();
                     log.info("Delete profile with UserID: {}", userId);
-                    profileService.deleteProfile(userId).block();
+                    profileService.deleteProfile(userId)
+                            .doOnError(e -> log.error("Failed to delete profile: {}", e.getMessage()))
+                            .onErrorResume(_ -> Mono.empty())
+                            .subscribe();
                 }
                 case UPDATE -> {
                     var profile = event.getData();

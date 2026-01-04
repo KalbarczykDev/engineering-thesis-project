@@ -50,11 +50,13 @@ public class ProfileServiceImpl implements ProfileService {
     public Mono<Void> deleteProfile(final Long userId) {
 
         if (userId < 1) {
-            throw new InvalidInputException("Invalid userId:" + userId);
+            return Mono.error(new InvalidInputException("Invalid userId: " + userId));
         }
 
         log.debug("deleteProfile: tries to delete an entity with userId: {}", userId);
-        return repository.findByUserId(userId).log(log.getName(), FINE).map(repository::delete).flatMap(e -> e);
+        return repository.deleteByUserId(userId)
+                .doOnError(e -> log.error("deleteProfile failed for userId {}: {}", userId, e.getMessage()))
+                .onErrorResume(_ -> Mono.empty());
     }
 
     @Override

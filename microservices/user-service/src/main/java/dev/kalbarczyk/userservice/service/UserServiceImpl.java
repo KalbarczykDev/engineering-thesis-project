@@ -57,12 +57,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<Void> deleteUser(final Long userId) {
-        return Mono.fromRunnable(() -> {
-                    log.debug("deleteUser: tries to delete an entity with userId: {}", userId);
-                    repository.findById(userId).ifPresent(repository::delete);
-                })
-                .subscribeOn(Schedulers.boundedElastic()).then();
+    public Mono<Void> deleteUser(Long userId) {
+        if (userId < 1) {
+            return Mono.error(new InvalidInputException("Invalid userId: " + userId));
+        }
+
+        return Mono.fromCallable(() ->
+                        repository.findById(userId)
+                                .orElseThrow(() -> new NotFoundException("No user found for userId: " + userId))
+                )
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnNext(repository::delete)
+                .doOnError(e -> log.error("deleteUser failed for userId {}: {}", userId, e.getMessage()))
+                .onErrorResume(_ -> Mono.empty())
+                .then();
     }
 
     @Override
